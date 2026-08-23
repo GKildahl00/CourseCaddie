@@ -4,18 +4,14 @@
 <head>
     <meta charset="UTF-8">
 
-    <!-- Sørger for at siden ser rigtig ud på en iPhone -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Lyngbygaard Golf GPS</title>
 
     <style>
-
-        /*
-        ------------------------------------------------
-        GENERELT DESIGN
-        ------------------------------------------------
-        */
 
         * {
             box-sizing: border-box;
@@ -31,11 +27,6 @@
             text-align: center;
         }
 
-
-        /*
-        Hele appens maksimale bredde
-        */
-
         .container {
             width: 100%;
             max-width: 650px;
@@ -45,20 +36,225 @@
 
         /*
         ------------------------------------------------
-        OVERSKRIFT
+        SKÆRME
         ------------------------------------------------
         */
 
-        h1 {
-            font-size: 24px;
-            margin-top: 12px;
-            margin-bottom: 8px;
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
         }
 
 
-        .hole {
-            font-size: 20px;
+        /*
+        ------------------------------------------------
+        HOVEDMENU
+        ------------------------------------------------
+        */
+
+        .main-menu {
+            padding-top: 35px;
+        }
+
+        .main-menu h1 {
+            font-size: 30px;
             margin-bottom: 8px;
+        }
+
+        .main-menu-subtitle {
+            font-size: 17px;
+            color: #666;
+            margin-bottom: 35px;
+        }
+
+        .course-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .course-button {
+            width: 100%;
+
+            padding: 22px 18px;
+
+            border: none;
+            border-radius: 14px;
+
+            background-color: white;
+
+            text-align: left;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.10);
+        }
+
+        .course-button:active {
+            transform: scale(0.98);
+        }
+
+        .course-name {
+            display: block;
+
+            font-size: 20px;
+            font-weight: bold;
+
+            color: #222;
+
+            margin-bottom: 6px;
+        }
+
+        .course-info {
+            display: block;
+
+            font-size: 14px;
+
+            color: #666;
+        }
+
+        .course-button.available {
+            border-left: 6px solid #007710;
+        }
+
+        .course-button.coming-soon {
+            border-left: 6px solid #aaa;
+        }
+
+        .coming-soon-label {
+            display: inline-block;
+
+            margin-top: 10px;
+
+            padding: 4px 8px;
+
+            border-radius: 6px;
+
+            background-color: #eeeeee;
+
+            font-size: 12px;
+            color: #666;
+        }
+
+
+        /*
+        ------------------------------------------------
+        HEADER PÅ BANESIDER
+        ------------------------------------------------
+        */
+
+        .screen-header {
+            position: relative;
+
+            min-height: 55px;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: flex-start;
+        }
+
+        .screen-header h1 {
+            font-size: 26px;
+
+            margin-top: 12px;
+            margin-bottom: 24px;
+
+            padding-left: 50px;
+            padding-right: 50px;
+        }
+
+
+        /*
+        ------------------------------------------------
+        HJEM-KNAP
+        ------------------------------------------------
+        */
+
+        .home-button {
+            position: absolute;
+
+            top: 0;
+            left: 0;
+
+            width: 48px;
+            height: 48px;
+
+            padding: 10px;
+
+            border: none;
+            border-radius: 10px;
+
+            background: transparent;
+
+            cursor: pointer;
+
+            color: #007710;
+        }
+
+        .home-button svg {
+            width: 100%;
+            height: 100%;
+
+            display: block;
+
+            fill: currentColor;
+        }
+
+        .home-button:active {
+            background-color: #e5e5e5;
+        }
+
+
+        /*
+        ------------------------------------------------
+        HUL-NAVIGATION
+        ------------------------------------------------
+        */
+
+        .hole-navigation {
+            display: grid;
+
+            grid-template-columns:
+                48px 1fr 48px;
+
+            align-items: center;
+
+            margin-bottom: 28px;
+        }
+
+        .hole {
+            font-size: 24px;
+        }
+
+        .hole-nav-button {
+            width: 48px;
+            height: 48px;
+
+            padding: 0;
+
+            border: none;
+            background: transparent;
+
+            color: #007710;
+
+            font-size: 32px;
+            line-height: 1;
+
+            cursor: pointer;
+        }
+
+        .hole-nav-button:disabled {
+            visibility: hidden;
+        }
+
+        .hole-nav-button:active {
+            opacity: 0.5;
         }
 
 
@@ -68,7 +264,7 @@
         ------------------------------------------------
         */
 
-        button {
+        #startButton {
             width: 100%;
 
             padding: 14px;
@@ -81,13 +277,22 @@
             border-radius: 10px;
 
             background-color: #e9e9e9;
+            color: #007aff;
 
             cursor: pointer;
+
+            transition:
+                background-color 0.2s,
+                color 0.2s;
         }
 
+        #startButton.gps-active {
+            background-color: #d93636;
+            color: white;
+        }
 
-        button:active {
-            background-color: #dddddd;
+        #startButton:active {
+            opacity: 0.8;
         }
 
 
@@ -105,7 +310,6 @@
             color: #555;
         }
 
-
         #accuracy {
             margin-top: 4px;
             margin-bottom: 12px;
@@ -119,25 +323,14 @@
         /*
         ------------------------------------------------
         HOVEDLAYOUT
-
-        Venstre:
-        afstande
-
-        Højre:
-        baneoversigt
         ------------------------------------------------
         */
 
         .hole-layout {
-
             display: grid;
 
-            /*
-            Venstre kolonne = afstande
-            Højre kolonne = baneoversigt
-            */
-
-            grid-template-columns: 120px minmax(0, 1fr);
+            grid-template-columns:
+                120px minmax(0, 1fr);
 
             gap: 10px;
 
@@ -156,15 +349,9 @@
         */
 
         .distance-column {
-
             display: flex;
 
             flex-direction: column;
-
-            /*
-            Fordeler BACK, CENTER og FRONT
-            hen over hele billedets højde
-            */
 
             justify-content: space-between;
 
@@ -179,7 +366,6 @@
         */
 
         .distance-box {
-
             background-color: white;
 
             padding: 12px 4px;
@@ -197,9 +383,7 @@
             align-items: center;
         }
 
-
         .label {
-
             font-size: 13px;
 
             color: #555;
@@ -207,9 +391,7 @@
             margin-bottom: 8px;
         }
 
-
         .distance {
-
             font-size: 32px;
 
             font-weight: bold;
@@ -219,9 +401,7 @@
             margin: 0;
         }
 
-
         .unit {
-
             font-size: 12px;
 
             margin-top: 6px;
@@ -237,7 +417,6 @@
         */
 
         .hole-map-container {
-
             width: 100%;
 
             margin: 0;
@@ -245,9 +424,7 @@
             min-width: 0;
         }
 
-
         .hole-map {
-
             width: 100%;
 
             height: auto;
@@ -265,11 +442,40 @@
 
         /*
         ------------------------------------------------
+        18-HULSBANEN - KOMMER SNART
+        ------------------------------------------------
+        */
+
+        .coming-soon-page {
+            background-color: white;
+
+            padding: 30px 20px;
+
+            border-radius: 14px;
+
+            margin-top: 30px;
+
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.10);
+        }
+
+        .coming-soon-page h2 {
+            margin-top: 0;
+
+            font-size: 24px;
+        }
+
+        .coming-soon-page p {
+            color: #666;
+
+            line-height: 1.5;
+        }
+
+
+        /*
+        ------------------------------------------------
         EKSTRA TIL SMÅ TELEFONER
         ------------------------------------------------
-
-        Hvis skærmen er meget smal,
-        gør vi afstandskolonnen lidt mindre.
         */
 
         @media (max-width: 360px) {
@@ -278,36 +484,35 @@
                 padding: 8px;
             }
 
-
             .hole-layout {
-
-                grid-template-columns: 105px minmax(0, 1fr);
+                grid-template-columns:
+                    105px minmax(0, 1fr);
 
                 gap: 8px;
             }
 
-
             .distance {
-
                 font-size: 28px;
             }
 
-
             .label {
-
                 font-size: 12px;
             }
 
-
             .unit {
-
                 font-size: 11px;
             }
 
-
-            h1 {
-
+            .screen-header h1 {
                 font-size: 21px;
+            }
+
+            .hole {
+                font-size: 22px;
+            }
+
+            .main-menu h1 {
+                font-size: 27px;
             }
 
         }
@@ -322,133 +527,386 @@
 
 
         <!--
-        ------------------------------------------------
-        OVERSKRIFT
-        ------------------------------------------------
+        ================================================================
+        HOVEDMENU
+        ================================================================
         -->
 
-        <h1>
-            Lyngbygaard SEGA 9-hulsbanen
-        </h1>
+        <div
+            id="mainMenuScreen"
+            class="screen active"
+        >
 
+            <div class="main-menu">
 
-        <div class="hole">
-            Hul 1
-        </div>
+                <h1>
+                    Velkommen til CourceCaddie
+                </h1>
 
-
-        <!--
-        ------------------------------------------------
-        GPS KNAP
-        ------------------------------------------------
-        -->
-
-        <button id="startButton">
-            Start GPS
-        </button>
-
-
-        <div id="status">
-            GPS er ikke startet
-        </div>
-
-
-        <div id="accuracy">
-        </div>
-
-
-
-        <!--
-        ------------------------------------------------
-        AFSTANDE + BANEOVERSIGT
-        ------------------------------------------------
-        -->
-
-        <div class="hole-layout">
-
-
-            <!-- VENSTRE SIDE -->
-
-            <div class="distance-column">
-
-
-                <div class="distance-box">
-
-                    <div class="label">
-                        BACK
-                    </div>
-
-                    <div
-                        class="distance"
-                        id="backDistance">
-                        ---
-                    </div>
-
-                    <div class="unit">
-                        meter
-                    </div>
-
+                <div class="main-menu-subtitle">
+                    Vælg bane
                 </div>
 
 
+                <div class="course-list">
 
-                <div class="distance-box">
 
-                    <div class="label">
-                        CENTER
-                    </div>
+                    <!-- SEGA 9-HULSBANE -->
 
-                    <div
-                        class="distance"
-                        id="centerDistance">
-                        ---
-                    </div>
+                    <button
+                        id="segaCourseButton"
+                        class="course-button available"
+                        type="button"
+                    >
 
-                    <div class="unit">
-                        meter
-                    </div>
+                        <span class="course-name">
+                            Lyngbygaard SEGA 9-hulsbanen
+                        </span>
+
+                        <span class="course-info">
+                            <ul>
+                                <li>Par: 33</li>
+                                <li>Tee 26: 2589 m</li>
+                                <li>Tee 24: 2488 m</li>
+                                <li>Tee 22: 2281 m</li>
+                                <li>Tee 21: 2204 m</li>
+                                <li>Tee 19: 1936 m</li>
+                            </ul>
+                        </span>
+
+                    </button>
+
+
+                    <!-- 18-HULSBANE -->
+
+                    <button
+                        id="mainCourseButton"
+                        class="course-button available"
+                        type="button"
+                    >
+
+                        <span class="course-name">
+                            Lyngbygaard 18-hulsbanen
+                        </span>
+
+                        <span class="course-info">
+                            18 huller
+                        </span>
+
+                        <span class="course-info">
+                            <ul>
+                                <li>Par: 72</li>
+                                <li>Tee 64: 6433 m</li>
+                                <li>Tee 62: 6197 m</li>
+                                <li>Tee 58: 5835 m</li>
+                                <li>Tee 53: 5332 m</li>
+                                <li>Tee 47: 4820 m</li>
+                            </ul>
+                        </span>
+
+                    </button>
+
 
                 </div>
-
-
-
-                <div class="distance-box">
-
-                    <div class="label">
-                        FRONT
-                    </div>
-
-                    <div
-                        class="distance"
-                        id="frontDistance">
-                        ---
-                    </div>
-
-                    <div class="unit">
-                        meter
-                    </div>
-
-                </div>
-
 
             </div>
 
+        </div>
 
 
-            <!-- HØJRE SIDE -->
 
-            <div class="hole-map-container">
+        <!--
+        ================================================================
+        SEGA 9-HULSBANE
+        ================================================================
+        -->
 
-                <img
-                    src="images/Lyngbygaard_9_hulsbanen_hul_1.png"
-                    alt="Baneoversigt hul 1"
-                    class="hole-map"
+        <div
+            id="segaScreen"
+            class="screen"
+        >
+
+
+            <!-- HEADER -->
+
+            <div class="screen-header">
+
+
+                <!-- HJEM -->
+
+                <button
+                    id="segaHomeButton"
+                    class="home-button"
+                    type="button"
+                    aria-label="Tilbage til hovedmenu"
                 >
 
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <path
+                            d="
+                            M12 3
+                            L2.5 11
+                            H5
+                            V21
+                            H10
+                            V15
+                            H14
+                            V21
+                            H19
+                            V11
+                            H21.5
+                            Z
+                            "
+                        />
+
+                    </svg>
+
+                </button>
+
+
+                <h1>
+                    Lyngbygaard SEGA 9-hulsbanen
+                </h1>
+
             </div>
 
 
+
+            <!--
+            ------------------------------------------------
+            HUL-NAVIGATION
+            ------------------------------------------------
+            -->
+
+            <div class="hole-navigation">
+
+                <button
+                    id="prevHoleButton"
+                    class="hole-nav-button"
+                    type="button"
+                    aria-label="Forrige hul"
+                >
+                    ◀
+                </button>
+
+
+                <div
+                    class="hole"
+                    id="holeTitle"
+                >
+                    Hul 1
+                </div>
+
+
+                <button
+                    id="nextHoleButton"
+                    class="hole-nav-button"
+                    type="button"
+                    aria-label="Næste hul"
+                >
+                    ▶
+                </button>
+
+            </div>
+
+
+
+            <!-- GPS KNAP -->
+
+            <button
+                id="startButton"
+                type="button"
+                aria-pressed="false"
+            >
+                Start GPS
+            </button>
+
+
+            <div id="status">
+                GPS er ikke startet
+            </div>
+
+
+            <div id="accuracy">
+            </div>
+
+
+
+            <!--
+            ------------------------------------------------
+            AFSTANDE + BANEOVERSIGT
+            ------------------------------------------------
+            -->
+
+            <div class="hole-layout">
+
+
+                <!-- VENSTRE SIDE -->
+
+                <div class="distance-column">
+
+
+                    <div class="distance-box">
+
+                        <div class="label">
+                            BACK
+                        </div>
+
+                        <div
+                            class="distance"
+                            id="backDistance"
+                        >
+                            ---
+                        </div>
+
+                        <div class="unit">
+                            meter
+                        </div>
+
+                    </div>
+
+
+                    <div class="distance-box">
+
+                        <div class="label">
+                            CENTER
+                        </div>
+
+                        <div
+                            class="distance"
+                            id="centerDistance"
+                        >
+                            ---
+                        </div>
+
+                        <div class="unit">
+                            meter
+                        </div>
+
+                    </div>
+
+
+                    <div class="distance-box">
+
+                        <div class="label">
+                            FRONT
+                        </div>
+
+                        <div
+                            class="distance"
+                            id="frontDistance"
+                        >
+                            ---
+                        </div>
+
+                        <div class="unit">
+                            meter
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- HØJRE SIDE -->
+
+                <div class="hole-map-container">
+
+                    <img
+                        id="holeMap"
+                        src="images/Lyngbygaard_9_hulsbanen_hul_1.png"
+                        alt="Baneoversigt hul 1"
+                        class="hole-map"
+                    >
+
+                </div>
+
+
+            </div>
+
         </div>
+
+
+
+        <!--
+        ================================================================
+        18-HULSBANEN
+        ================================================================
+        -->
+
+        <div
+            id="mainCourseScreen"
+            class="screen"
+        >
+
+
+            <div class="screen-header">
+
+
+                <!-- HJEM -->
+
+                <button
+                    id="mainCourseHomeButton"
+                    class="home-button"
+                    type="button"
+                    aria-label="Tilbage til hovedmenu"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <path
+                            d="
+                            M12 3
+                            L2.5 11
+                            H5
+                            V21
+                            H10
+                            V15
+                            H14
+                            V21
+                            H19
+                            V11
+                            H21.5
+                            Z
+                            "
+                        />
+
+                    </svg>
+
+                </button>
+
+
+                <h1>
+                    Lyngbygaard 18-hulsbanen
+                </h1>
+
+            </div>
+
+
+            <div class="coming-soon-page">
+
+                <h2>
+                    Kommer snart
+                </h2>
+
+                <p>
+                    GPS-data og baneoversigter til
+                    Lyngbygaard 18-hulsbanen er endnu
+                    ikke implementeret.
+                </p>
+
+            </div>
+
+        </div>
+
 
     </div>
 
@@ -458,64 +916,424 @@
 
 
         /*
-        ------------------------------------------------
-        GREEN KOORDINATER
-        ------------------------------------------------
-
-        Disse værdier kommer fra Excel-arket.
-
-        Excel:
-        56,17438333
-
-        JavaScript:
-        56.17438333
+        ================================================================
+        DATA FOR SEGA 9-HULSBANEN
+        ================================================================
         */
 
 
-        const hole1 = {
+        const holes = [
 
 
-            front: {
+            /*
+            ------------------------------
+            HUL 1
+            ------------------------------
+            */
 
-                lat: 56.17438333,
+            {
+                number: 1,
 
-                lon: 10.03423889
+                image:
+                    "images/Lyngbygaard_9_hulsbanen_hul_1.png",
 
+                front: {
+                    lat: 56.17438333,
+                    lon: 10.03423889
+                },
+
+                center: {
+                    lat: 56.17456389,
+                    lon: 10.03441111
+                },
+
+                back: {
+                    lat: 56.17469722,
+                    lon: 10.03463333
+                }
             },
 
 
-            center: {
+            /*
+            ------------------------------
+            HUL 2
+            ------------------------------
+            */
 
-                lat: 56.17456389,
+            {
+                number: 2,
 
-                lon: 10.03441111
+                image:
+                    "images/Lyngbygaard_9_hulsbanen_hul_2.png",
 
+                front: {
+                    lat: 56.17554722,
+                    lon: 10.03828056
+                },
+
+                center: {
+                    lat: 56.17552222,
+                    lon: 10.03850833
+                },
+
+                back: {
+                    lat: 56.17554722,
+                    lon: 10.03870556
+                }
             },
 
 
-            back: {
+            /*
+            ------------------------------
+            HUL 3
+            ------------------------------
+            */
 
-                lat: 56.17469722,
+            {
+                number: 3,
 
-                lon: 10.03463333
+                image:
+                    "images/Lyngbygaard_9_hulsbanen_hul_3.png",
 
+                front: {
+                    lat: 56.17766944,
+                    lon: 10.03660556
+                },
+
+                center: {
+                    lat: 56.17772222,
+                    lon: 10.03636667
+                },
+
+                back: {
+                    lat: 56.17771944,
+                    lon: 10.03610833
+                }
+            },
+
+
+            /*
+            ------------------------------
+            HUL 4
+            ------------------------------
+            */
+
+            {
+                number: 4,
+
+                image:
+                    "images/Lyngbygaard_9_hulsbanen_hul_4.png",
+
+                front: {
+                    lat: 56.17871667,
+                    lon: 10.02917778
+                },
+
+                center: {
+                    lat: 56.17872778,
+                    lon: 10.02904167
+                },
+
+                back: {
+                    lat: 56.17876111,
+                    lon: 10.02889444
+                }
+            },
+
+
+            /*
+            ------------------------------
+            HUL 5
+            ------------------------------
+            */
+
+            {
+                number: 5,
+
+                image:
+                    "images/Lyngbygaard_9_hulsbanen_hul_5.png",
+
+                front: {
+                    lat: 56.17919167,
+                    lon: 10.02928889
+                },
+
+                center: {
+                    lat: 56.17924444,
+                    lon: 10.02949444
+                },
+
+                back: {
+                    lat: 56.17932500,
+                    lon: 10.02965556
+                }
+            },
+
+
+            /*
+            ------------------------------
+            HUL 6
+            ------------------------------
+            */
+
+            {
+                number: 6,
+
+                image:
+                    "images/Lyngbygaard_9_hulsbanen_hul_6.png",
+
+                front: {
+                    lat: 56.17880833,
+                    lon: 10.03605556
+                },
+
+                center: {
+                    lat: 56.17880833,
+                    lon: 10.03631944
+                },
+
+                back: {
+                    lat: 56.17878056,
+                    lon: 10.03657778
+                }
+            },
+
+
+            /*
+            ------------------------------
+            HUL 7
+            ------------------------------
+            */
+
+            {
+                number: 7,
+
+                image:
+                    "images/Lyngbygaard_9_hulsbanen_hul_7.png",
+
+                front: {
+                    lat: 56.17824167,
+                    lon: 10.03803056
+                },
+
+                center: {
+                    lat: 56.17818611,
+                    lon: 10.03832222
+                },
+
+                back: {
+                    lat: 56.17813333,
+                    lon: 10.03859722
+                }
+            },
+
+
+            /*
+            ------------------------------
+            HUL 8
+            ------------------------------
+            */
+
+            {
+                number: 8,
+
+                image:
+                    "images/Lyngbygaard_9_hulsbanen_hul_8.png",
+
+                front: {
+                    lat: 56.17521389,
+                    lon: 10.03953611
+                },
+
+                center: {
+                    lat: 56.17505278,
+                    lon: 10.03940833
+                },
+
+                back: {
+                    lat: 56.17489722,
+                    lon: 10.03936944
+                }
+            },
+
+
+            /*
+            ------------------------------
+            HUL 9
+            ------------------------------
+            */
+
+            {
+                number: 9,
+
+                image:
+                    "images/Lyngbygaard_9_hulsbanen_hul_9.png",
+
+                front: {
+                    lat: 56.17186667,
+                    lon: 10.03427500
+                },
+
+                center: {
+                    lat: 56.17174167,
+                    lon: 10.03420556
+                },
+
+                back: {
+                    lat: 56.17167500,
+                    lon: 10.03400833
+                }
             }
 
+        ];
 
-        };
+
+
+        /*
+        ================================================================
+        APP STATE
+        ================================================================
+        */
+
+        let currentHoleIndex = 0;
+
+        let watchId = null;
+
+        let latestPosition = null;
+
+
+
+        /*
+        ================================================================
+        SKÆRM-NAVIGATION
+        ================================================================
+        */
+
+
+        function showScreen(screenId) {
+
+            const screens =
+                document.querySelectorAll(
+                    ".screen"
+                );
+
+
+            screens.forEach(
+                function (screen) {
+
+                    screen.classList.remove(
+                        "active"
+                    );
+
+                }
+            );
+
+
+            document
+                .getElementById(screenId)
+                .classList.add(
+                    "active"
+                );
+
+
+            window.scrollTo(
+                0,
+                0
+            );
+        }
 
 
 
         /*
         ------------------------------------------------
-        BEREGN AFSTAND MELLEM TO GPS-PUNKTER
+        ÅBN SEGA 9-HULSBANEN
         ------------------------------------------------
-
-        Funktionen bruger Haversine-formlen.
-
-        Resultatet returneres i meter.
         */
 
+        function openSegaCourse() {
+
+            /*
+            Start altid på hul 1
+            */
+
+            currentHoleIndex = 0;
+
+
+            /*
+            GPS skal være slukket ved start
+            */
+
+            stopGPS(
+                "GPS er ikke startet"
+            );
+
+
+            updateHoleDisplay();
+
+
+            showScreen(
+                "segaScreen"
+            );
+        }
+
+
+
+        /*
+        ------------------------------------------------
+        ÅBN 18-HULSBANEN
+        ------------------------------------------------
+        */
+
+        function openMainCourse() {
+
+            stopGPS(
+                "GPS er ikke startet"
+            );
+
+
+            showScreen(
+                "mainCourseScreen"
+            );
+        }
+
+
+
+        /*
+        ------------------------------------------------
+        TILBAGE TIL HOVEDMENU
+        ------------------------------------------------
+        */
+
+        function goHome() {
+
+            /*
+            Stop GPS rigtigt,
+            hvis den kører.
+            */
+
+            stopGPS(
+                "GPS er ikke startet"
+            );
+
+
+            currentHoleIndex = 0;
+
+
+            updateHoleDisplay();
+
+
+            showScreen(
+                "mainMenuScreen"
+            );
+        }
+
+
+
+        /*
+        ================================================================
+        BEREGN AFSTAND
+        ================================================================
+        */
 
         function calculateDistance(
             lat1,
@@ -524,42 +1342,61 @@
             lon2
         ) {
 
-
-            const earthRadius = 6371000;
+            const earthRadius =
+                6371000;
 
 
             const lat1Rad =
-                lat1 * Math.PI / 180;
+                lat1 *
+                Math.PI /
+                180;
 
 
             const lat2Rad =
-                lat2 * Math.PI / 180;
+                lat2 *
+                Math.PI /
+                180;
 
 
             const deltaLat =
                 (lat2 - lat1) *
-                Math.PI / 180;
+                Math.PI /
+                180;
 
 
             const deltaLon =
                 (lon2 - lon1) *
-                Math.PI / 180;
-
+                Math.PI /
+                180;
 
 
             const a =
 
-                Math.sin(deltaLat / 2) *
-                Math.sin(deltaLat / 2)
+                Math.sin(
+                    deltaLat / 2
+                ) *
+
+                Math.sin(
+                    deltaLat / 2
+                )
 
                 +
 
-                Math.cos(lat1Rad) *
-                Math.cos(lat2Rad) *
+                Math.cos(
+                    lat1Rad
+                ) *
 
-                Math.sin(deltaLon / 2) *
-                Math.sin(deltaLon / 2);
+                Math.cos(
+                    lat2Rad
+                ) *
 
+                Math.sin(
+                    deltaLon / 2
+                ) *
+
+                Math.sin(
+                    deltaLon / 2
+                );
 
 
             const c =
@@ -570,30 +1407,34 @@
 
                     Math.sqrt(a),
 
-                    Math.sqrt(1 - a)
+                    Math.sqrt(
+                        1 - a
+                    )
 
                 );
 
 
-
-            const distance =
-                earthRadius * c;
-
-
-            return distance;
-
+            return (
+                earthRadius * c
+            );
         }
 
 
 
         /*
-        ------------------------------------------------
-        MODTAG GPS-POSITION
-        ------------------------------------------------
+        ================================================================
+        BEREGN OG VIS AFSTANDE
+        ================================================================
         */
 
+        function updateDistances(
+            position
+        ) {
 
-        function positionUpdated(position) {
+            const currentHole =
+                holes[
+                    currentHoleIndex
+                ];
 
 
             const myLatitude =
@@ -604,256 +1445,600 @@
                 position.coords.longitude;
 
 
-            const accuracy =
-                position.coords.accuracy;
-
-
-
-            /*
-            Vis position i browserens console
-            */
-
-            console.log(
-                "Min position:",
-                myLatitude,
-                myLongitude
-            );
-
-
-
-            /*
-            ------------------------------------------------
-            BEREGN AFSTAND TIL FRONT
-            ------------------------------------------------
-            */
-
-
             const distanceFront =
-
                 calculateDistance(
 
                     myLatitude,
-
                     myLongitude,
 
-                    hole1.front.lat,
-
-                    hole1.front.lon
+                    currentHole.front.lat,
+                    currentHole.front.lon
 
                 );
-
-
-
-            /*
-            ------------------------------------------------
-            BEREGN AFSTAND TIL CENTER
-            ------------------------------------------------
-            */
 
 
             const distanceCenter =
-
                 calculateDistance(
 
                     myLatitude,
-
                     myLongitude,
 
-                    hole1.center.lat,
-
-                    hole1.center.lon
+                    currentHole.center.lat,
+                    currentHole.center.lon
 
                 );
-
-
-
-            /*
-            ------------------------------------------------
-            BEREGN AFSTAND TIL BACK
-            ------------------------------------------------
-            */
 
 
             const distanceBack =
-
                 calculateDistance(
 
                     myLatitude,
-
                     myLongitude,
 
-                    hole1.back.lat,
-
-                    hole1.back.lon
+                    currentHole.back.lat,
+                    currentHole.back.lon
 
                 );
 
 
-
-            /*
-            ------------------------------------------------
-            VIS RESULTATER
-            ------------------------------------------------
-            */
-
-
             document
-                .getElementById("frontDistance")
+                .getElementById(
+                    "frontDistance"
+                )
                 .textContent =
-                Math.round(distanceFront);
-
+                Math.round(
+                    distanceFront
+                );
 
 
             document
-                .getElementById("centerDistance")
+                .getElementById(
+                    "centerDistance"
+                )
                 .textContent =
-                Math.round(distanceCenter);
-
+                Math.round(
+                    distanceCenter
+                );
 
 
             document
-                .getElementById("backDistance")
+                .getElementById(
+                    "backDistance"
+                )
                 .textContent =
-                Math.round(distanceBack);
+                Math.round(
+                    distanceBack
+                );
+        }
 
 
 
-            /*
-            ------------------------------------------------
-            GPS STATUS
-            ------------------------------------------------
-            */
+        /*
+        ================================================================
+        NY GPS-POSITION
+        ================================================================
+        */
+
+        function positionUpdated(
+            position
+        ) {
+
+            latestPosition =
+                position;
+
+
+            console.log(
+                "Min position:",
+                position.coords.latitude,
+                position.coords.longitude
+            );
+
+
+            updateDistances(
+                position
+            );
 
 
             document
-                .getElementById("status")
+                .getElementById(
+                    "status"
+                )
                 .textContent =
                 "GPS aktiv";
 
 
-
             document
-                .getElementById("accuracy")
+                .getElementById(
+                    "accuracy"
+                )
                 .textContent =
 
                 "Estimeret GPS-nøjagtighed: ±" +
 
-                Math.round(accuracy) +
+                Math.round(
+                    position.coords.accuracy
+                )
+
+                +
 
                 " meter";
-
         }
 
 
 
         /*
-        ------------------------------------------------
+        ================================================================
         GPS-FEJL
-        ------------------------------------------------
+        ================================================================
         */
 
-
-        function positionError(error) {
-
+        function positionError(
+            error
+        ) {
 
             document
-                .getElementById("status")
+                .getElementById(
+                    "status"
+                )
                 .textContent =
-                "GPS fejl: " +
-                error.message;
 
+                "GPS fejl: " +
+
+                error.message;
         }
 
 
 
         /*
-        ------------------------------------------------
+        ================================================================
         START GPS
-        ------------------------------------------------
+        ================================================================
         */
-
 
         function startGPS() {
 
-
-            /*
-            Kontrollér at browseren
-            understøtter Geolocation
-            */
-
-
-            if (!navigator.geolocation) {
-
+            if (
+                !navigator.geolocation
+            ) {
 
                 document
-                    .getElementById("status")
+                    .getElementById(
+                        "status"
+                    )
                     .textContent =
                     "Denne browser understøtter ikke GPS.";
 
 
                 return;
-
             }
 
 
+            if (
+                watchId !== null
+            ) {
 
-            /*
-            Vis status mens GPS
-            finder positionen
-            */
+                return;
+            }
 
 
             document
-                .getElementById("status")
+                .getElementById(
+                    "status"
+                )
                 .textContent =
                 "Finder GPS-position...";
 
 
+            watchId =
+                navigator
+                    .geolocation
+                    .watchPosition(
 
-            /*
-            Start kontinuerlig GPS-opdatering
-            */
+                        positionUpdated,
 
+                        positionError,
 
-            navigator.geolocation.watchPosition(
+                        {
+                            enableHighAccuracy:
+                                true,
 
+                            timeout:
+                                10000,
 
-                positionUpdated,
+                            maximumAge:
+                                0
+                        }
 
-
-                positionError,
-
-
-                {
-
-                    enableHighAccuracy: true,
-
-                    timeout: 10000,
-
-                    maximumAge: 0
-
-                }
+                    );
 
 
+            const button =
+                document.getElementById(
+                    "startButton"
+                );
+
+
+            button.textContent =
+                "Stop GPS";
+
+
+            button
+                .classList
+                .add(
+                    "gps-active"
+                );
+
+
+            button.setAttribute(
+                "aria-pressed",
+                "true"
             );
-
         }
 
 
 
         /*
-        ------------------------------------------------
-        START GPS NÅR KNAPPEN TRYKKES
-        ------------------------------------------------
+        ================================================================
+        STOP GPS
+        ================================================================
+        */
+
+        function stopGPS(
+            statusText =
+                "GPS stoppet"
+        ) {
+
+            if (
+                watchId !== null
+            ) {
+
+                navigator
+                    .geolocation
+                    .clearWatch(
+                        watchId
+                    );
+
+
+                watchId =
+                    null;
+            }
+
+
+            latestPosition =
+                null;
+
+
+            const button =
+                document.getElementById(
+                    "startButton"
+                );
+
+
+            button.textContent =
+                "Start GPS";
+
+
+            button
+                .classList
+                .remove(
+                    "gps-active"
+                );
+
+
+            button.setAttribute(
+                "aria-pressed",
+                "false"
+            );
+
+
+            document
+                .getElementById(
+                    "status"
+                )
+                .textContent =
+                statusText;
+
+
+            document
+                .getElementById(
+                    "accuracy"
+                )
+                .textContent =
+                "";
+
+
+            resetDistances();
+        }
+
+
+
+        /*
+        ================================================================
+        NULSTIL AFSTANDE
+        ================================================================
+        */
+
+        function resetDistances() {
+
+            document
+                .getElementById(
+                    "frontDistance"
+                )
+                .textContent =
+                "---";
+
+
+            document
+                .getElementById(
+                    "centerDistance"
+                )
+                .textContent =
+                "---";
+
+
+            document
+                .getElementById(
+                    "backDistance"
+                )
+                .textContent =
+                "---";
+        }
+
+
+
+        /*
+        ================================================================
+        OPDATER HUL
+        ================================================================
+        */
+
+        function updateHoleDisplay() {
+
+            const currentHole =
+                holes[
+                    currentHoleIndex
+                ];
+
+
+            document
+                .getElementById(
+                    "holeTitle"
+                )
+                .textContent =
+
+                "Hul " +
+
+                currentHole.number;
+
+
+            const holeMap =
+                document.getElementById(
+                    "holeMap"
+                );
+
+
+            holeMap.src =
+                currentHole.image;
+
+
+            holeMap.alt =
+                "Baneoversigt hul " +
+                currentHole.number;
+
+
+            /*
+            Skjul tilbage-pilen på hul 1
+            */
+
+            document
+                .getElementById(
+                    "prevHoleButton"
+                )
+                .disabled =
+                currentHoleIndex === 0;
+
+
+            /*
+            Skjul frem-pilen på hul 9
+            */
+
+            document
+                .getElementById(
+                    "nextHoleButton"
+                )
+                .disabled =
+
+                currentHoleIndex ===
+                holes.length - 1;
+
+
+            /*
+            Hvis GPS kører, beregn
+            afstande til det nye hul.
+            */
+
+            if (
+                latestPosition !== null
+            ) {
+
+                updateDistances(
+                    latestPosition
+                );
+
+            } else {
+
+                resetDistances();
+
+            }
+        }
+
+
+
+        /*
+        ================================================================
+        EVENT LISTENERS
+        ================================================================
         */
 
 
+        /*
+        HOVEDMENU:
+        SEGA 9-HULSBANE
+        */
+
         document
-            .getElementById("startButton")
+            .getElementById(
+                "segaCourseButton"
+            )
             .addEventListener(
                 "click",
-                startGPS
+                openSegaCourse
             );
+
+
+
+        /*
+        HOVEDMENU:
+        18-HULSBANE
+        */
+
+        document
+            .getElementById(
+                "mainCourseButton"
+            )
+            .addEventListener(
+                "click",
+                openMainCourse
+            );
+
+
+
+        /*
+        HJEM FRA SEGA
+        */
+
+        document
+            .getElementById(
+                "segaHomeButton"
+            )
+            .addEventListener(
+                "click",
+                goHome
+            );
+
+
+
+        /*
+        HJEM FRA 18-HULSBANEN
+        */
+
+        document
+            .getElementById(
+                "mainCourseHomeButton"
+            )
+            .addEventListener(
+                "click",
+                goHome
+            );
+
+
+
+        /*
+        START / STOP GPS
+        */
+
+        document
+            .getElementById(
+                "startButton"
+            )
+            .addEventListener(
+                "click",
+                function () {
+
+                    if (
+                        watchId === null
+                    ) {
+
+                        startGPS();
+
+                    } else {
+
+                        stopGPS();
+
+                    }
+
+                }
+            );
+
+
+
+        /*
+        FORRIGE HUL
+        */
+
+        document
+            .getElementById(
+                "prevHoleButton"
+            )
+            .addEventListener(
+                "click",
+                function () {
+
+                    if (
+                        currentHoleIndex >
+                        0
+                    ) {
+
+                        currentHoleIndex--;
+
+                        updateHoleDisplay();
+
+                    }
+
+                }
+            );
+
+
+
+        /*
+        NÆSTE HUL
+        */
+
+        document
+            .getElementById(
+                "nextHoleButton"
+            )
+            .addEventListener(
+                "click",
+                function () {
+
+                    if (
+                        currentHoleIndex <
+                        holes.length - 1
+                    ) {
+
+                        currentHoleIndex++;
+
+                        updateHoleDisplay();
+
+                    }
+
+                }
+            );
+
+
+
+        /*
+        ================================================================
+        INITIALISERING
+        ================================================================
+        */
+
+        updateHoleDisplay();
+
+        showScreen(
+            "mainMenuScreen"
+        );
 
 
     </script>
