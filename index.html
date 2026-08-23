@@ -10,166 +10,500 @@
     <title>Lyngbygaard Golf GPS</title>
 
     <style>
+
+        /*
+        ------------------------------------------------
+        GENERELT DESIGN
+        ------------------------------------------------
+        */
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
+
             margin: 0;
-            padding: 20px;
+            padding: 12px;
+
             text-align: center;
         }
 
+
+        /*
+        Hele appens maksimale bredde
+        */
+
         .container {
-            max-width: 450px;
-            margin: auto;
+            width: 100%;
+            max-width: 650px;
+            margin: 0 auto;
         }
+
+
+        /*
+        ------------------------------------------------
+        OVERSKRIFT
+        ------------------------------------------------
+        */
 
         h1 {
             font-size: 24px;
-            margin-bottom: 12px;
+            margin-top: 12px;
+            margin-bottom: 8px;
         }
+
 
         .hole {
             font-size: 20px;
-            margin-bottom: 2px;
+            margin-bottom: 8px;
         }
 
-        .hole-map-container {
-    margin: 20px 0;
-}
 
-        .hole-map {
-            width: 100%;
-            max-width: 450px;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        .distance-box {
-            background-color: white;
-            margin: 12px 0;
-            padding: 12px;
-            border-radius: 12px;
-        }
-
-        .label {
-            font-size: 16px;
-            color: #555;
-        }
-
-        .distance {
-            font-size: 38px;
-            font-weight: bold;
-            margin-top: 5px;
-        }
-
-        .unit {
-            font-size: 16px;
-        }
+        /*
+        ------------------------------------------------
+        GPS KNAP
+        ------------------------------------------------
+        */
 
         button {
             width: 100%;
-            padding: 16px;
-            margin-top: 6px;
+
+            padding: 14px;
+
+            margin-top: 4px;
+
             font-size: 16px;
+
             border: none;
             border-radius: 10px;
+
+            background-color: #e9e9e9;
+
             cursor: pointer;
         }
 
+
+        button:active {
+            background-color: #dddddd;
+        }
+
+
+        /*
+        ------------------------------------------------
+        GPS STATUS
+        ------------------------------------------------
+        */
+
         #status {
-            margin-top: 6px;
+            margin-top: 8px;
+
+            font-size: 15px;
+
             color: #555;
         }
 
+
         #accuracy {
-            margin-top: 10px;
-            font-size: 14px;
+            margin-top: 4px;
+            margin-bottom: 12px;
+
+            font-size: 13px;
+
             color: #777;
         }
+
+
+        /*
+        ------------------------------------------------
+        HOVEDLAYOUT
+
+        Venstre:
+        afstande
+
+        Højre:
+        baneoversigt
+        ------------------------------------------------
+        */
+
+        .hole-layout {
+
+            display: grid;
+
+            /*
+            Venstre kolonne = afstande
+            Højre kolonne = baneoversigt
+            */
+
+            grid-template-columns: 120px minmax(0, 1fr);
+
+            gap: 10px;
+
+            width: 100%;
+
+            margin-top: 10px;
+
+            align-items: stretch;
+        }
+
+
+        /*
+        ------------------------------------------------
+        AFSTANDSKOLONNE
+        ------------------------------------------------
+        */
+
+        .distance-column {
+
+            display: flex;
+
+            flex-direction: column;
+
+            /*
+            Fordeler BACK, CENTER og FRONT
+            hen over hele billedets højde
+            */
+
+            justify-content: space-between;
+
+            gap: 10px;
+        }
+
+
+        /*
+        ------------------------------------------------
+        AFSTANDSBOKSE
+        ------------------------------------------------
+        */
+
+        .distance-box {
+
+            background-color: white;
+
+            padding: 12px 4px;
+
+            border-radius: 12px;
+
+            min-height: 100px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+            align-items: center;
+        }
+
+
+        .label {
+
+            font-size: 13px;
+
+            color: #555;
+
+            margin-bottom: 8px;
+        }
+
+
+        .distance {
+
+            font-size: 32px;
+
+            font-weight: bold;
+
+            line-height: 1;
+
+            margin: 0;
+        }
+
+
+        .unit {
+
+            font-size: 12px;
+
+            margin-top: 6px;
+
+            color: #555;
+        }
+
+
+        /*
+        ------------------------------------------------
+        BANEOVERSIGT
+        ------------------------------------------------
+        */
+
+        .hole-map-container {
+
+            width: 100%;
+
+            margin: 0;
+
+            min-width: 0;
+        }
+
+
+        .hole-map {
+
+            width: 100%;
+
+            height: auto;
+
+            display: block;
+
+            margin: 0;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+
+        /*
+        ------------------------------------------------
+        EKSTRA TIL SMÅ TELEFONER
+        ------------------------------------------------
+
+        Hvis skærmen er meget smal,
+        gør vi afstandskolonnen lidt mindre.
+        */
+
+        @media (max-width: 360px) {
+
+            body {
+                padding: 8px;
+            }
+
+
+            .hole-layout {
+
+                grid-template-columns: 105px minmax(0, 1fr);
+
+                gap: 8px;
+            }
+
+
+            .distance {
+
+                font-size: 28px;
+            }
+
+
+            .label {
+
+                font-size: 12px;
+            }
+
+
+            .unit {
+
+                font-size: 11px;
+            }
+
+
+            h1 {
+
+                font-size: 21px;
+            }
+
+        }
+
     </style>
 </head>
+
 
 <body>
 
     <div class="container">
 
-        <h1>Lyngbygaard SEGA 9-hulsbanen</h1>
+
+        <!--
+        ------------------------------------------------
+        OVERSKRIFT
+        ------------------------------------------------
+        -->
+
+        <h1>
+            Lyngbygaard SEGA 9-hulsbanen
+        </h1>
+
 
         <div class="hole">
             Hul 1
         </div>
 
+
+        <!--
+        ------------------------------------------------
+        GPS KNAP
+        ------------------------------------------------
+        -->
+
         <button id="startButton">
             Start GPS
         </button>
+
 
         <div id="status">
             GPS er ikke startet
         </div>
 
+
         <div id="accuracy">
         </div>
 
-        <div class="distance-box">
-            <div class="label">BACK</div>
-            <div class="distance" id="backDistance">---</div>
-            <div class="unit">meter</div>
-        </div>
 
-        <div class="distance-box">
-            <div class="label">CENTER</div>
-            <div class="distance" id="centerDistance">---</div>
-            <div class="unit">meter</div>
-        </div>
 
-        <div class="distance-box">
-            <div class="label">FRONT</div>
-            <div class="distance" id="frontDistance">---</div>
-            <div class="unit">meter</div>
-        </div>
+        <!--
+        ------------------------------------------------
+        AFSTANDE + BANEOVERSIGT
+        ------------------------------------------------
+        -->
 
-        <div class="hole-map-container">
-            <img src="images/Lyngbygaard_9_hulsbanen_hul_1.png" alt="Baneoversigt hul 1" class="hole-map">
+        <div class="hole-layout">
+
+
+            <!-- VENSTRE SIDE -->
+
+            <div class="distance-column">
+
+
+                <div class="distance-box">
+
+                    <div class="label">
+                        BACK
+                    </div>
+
+                    <div
+                        class="distance"
+                        id="backDistance">
+                        ---
+                    </div>
+
+                    <div class="unit">
+                        meter
+                    </div>
+
+                </div>
+
+
+
+                <div class="distance-box">
+
+                    <div class="label">
+                        CENTER
+                    </div>
+
+                    <div
+                        class="distance"
+                        id="centerDistance">
+                        ---
+                    </div>
+
+                    <div class="unit">
+                        meter
+                    </div>
+
+                </div>
+
+
+
+                <div class="distance-box">
+
+                    <div class="label">
+                        FRONT
+                    </div>
+
+                    <div
+                        class="distance"
+                        id="frontDistance">
+                        ---
+                    </div>
+
+                    <div class="unit">
+                        meter
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- HØJRE SIDE -->
+
+            <div class="hole-map-container">
+
+                <img
+                    src="images/Lyngbygaard_9_hulsbanen_hul_1.png"
+                    alt="Baneoversigt hul 1"
+                    class="hole-map"
+                >
+
+            </div>
+
+
         </div>
 
     </div>
 
 
+
     <script>
+
 
         /*
         ------------------------------------------------
         GREEN KOORDINATER
         ------------------------------------------------
 
-        Disse værdier kommer direkte fra dit Excel-ark.
+        Disse værdier kommer fra Excel-arket.
 
-        Husk:
-        Excel:      56,17438333
-        JavaScript: 56.17438333
+        Excel:
+        56,17438333
+
+        JavaScript:
+        56.17438333
         */
+
 
         const hole1 = {
 
+
             front: {
+
                 lat: 56.17438333,
+
                 lon: 10.03423889
+
             },
+
 
             center: {
+
                 lat: 56.17456389,
+
                 lon: 10.03441111
+
             },
 
+
             back: {
+
                 lat: 56.17469722,
+
                 lon: 10.03463333
+
             }
 
+
         };
+
 
 
         /*
@@ -182,23 +516,43 @@
         Resultatet returneres i meter.
         */
 
-        function calculateDistance(lat1, lon1, lat2, lon2) {
+
+        function calculateDistance(
+            lat1,
+            lon1,
+            lat2,
+            lon2
+        ) {
+
 
             const earthRadius = 6371000;
 
-            const lat1Rad = lat1 * Math.PI / 180;
-            const lat2Rad = lat2 * Math.PI / 180;
+
+            const lat1Rad =
+                lat1 * Math.PI / 180;
+
+
+            const lat2Rad =
+                lat2 * Math.PI / 180;
+
 
             const deltaLat =
-                (lat2 - lat1) * Math.PI / 180;
+                (lat2 - lat1) *
+                Math.PI / 180;
+
 
             const deltaLon =
-                (lon2 - lon1) * Math.PI / 180;
+                (lon2 - lon1) *
+                Math.PI / 180;
+
 
 
             const a =
+
                 Math.sin(deltaLat / 2) *
-                Math.sin(deltaLat / 2) +
+                Math.sin(deltaLat / 2)
+
+                +
 
                 Math.cos(lat1Rad) *
                 Math.cos(lat2Rad) *
@@ -207,11 +561,19 @@
                 Math.sin(deltaLon / 2);
 
 
+
             const c =
-                2 * Math.atan2(
+
+                2 *
+
+                Math.atan2(
+
                     Math.sqrt(a),
+
                     Math.sqrt(1 - a)
+
                 );
+
 
 
             const distance =
@@ -219,7 +581,9 @@
 
 
             return distance;
+
         }
+
 
 
         /*
@@ -228,17 +592,26 @@
         ------------------------------------------------
         */
 
+
         function positionUpdated(position) {
+
 
             const myLatitude =
                 position.coords.latitude;
 
+
             const myLongitude =
                 position.coords.longitude;
+
 
             const accuracy =
                 position.coords.accuracy;
 
+
+
+            /*
+            Vis position i browserens console
+            */
 
             console.log(
                 "Min position:",
@@ -247,72 +620,130 @@
             );
 
 
+
             /*
-            Beregn afstand til de tre green-punkter
+            ------------------------------------------------
+            BEREGN AFSTAND TIL FRONT
+            ------------------------------------------------
             */
 
+
             const distanceFront =
+
                 calculateDistance(
+
                     myLatitude,
+
                     myLongitude,
+
                     hole1.front.lat,
+
                     hole1.front.lon
+
                 );
+
+
+
+            /*
+            ------------------------------------------------
+            BEREGN AFSTAND TIL CENTER
+            ------------------------------------------------
+            */
 
 
             const distanceCenter =
+
                 calculateDistance(
+
                     myLatitude,
+
                     myLongitude,
+
                     hole1.center.lat,
+
                     hole1.center.lon
+
                 );
 
-
-            const distanceBack =
-                calculateDistance(
-                    myLatitude,
-                    myLongitude,
-                    hole1.back.lat,
-                    hole1.back.lon
-                );
 
 
             /*
-            Vis resultat på skærmen
+            ------------------------------------------------
+            BEREGN AFSTAND TIL BACK
+            ------------------------------------------------
             */
 
-            document.getElementById(
-                "frontDistance"
-            ).textContent =
+
+            const distanceBack =
+
+                calculateDistance(
+
+                    myLatitude,
+
+                    myLongitude,
+
+                    hole1.back.lat,
+
+                    hole1.back.lon
+
+                );
+
+
+
+            /*
+            ------------------------------------------------
+            VIS RESULTATER
+            ------------------------------------------------
+            */
+
+
+            document
+                .getElementById("frontDistance")
+                .textContent =
                 Math.round(distanceFront);
 
 
-            document.getElementById(
-                "centerDistance"
-            ).textContent =
+
+            document
+                .getElementById("centerDistance")
+                .textContent =
                 Math.round(distanceCenter);
 
 
-            document.getElementById(
-                "backDistance"
-            ).textContent =
+
+            document
+                .getElementById("backDistance")
+                .textContent =
                 Math.round(distanceBack);
 
 
-            document.getElementById(
-                "status"
-            ).textContent =
+
+            /*
+            ------------------------------------------------
+            GPS STATUS
+            ------------------------------------------------
+            */
+
+
+            document
+                .getElementById("status")
+                .textContent =
                 "GPS aktiv";
 
 
-            document.getElementById(
-                "accuracy"
-            ).textContent =
+
+            document
+                .getElementById("accuracy")
+                .textContent =
+
                 "Estimeret GPS-nøjagtighed: ±" +
+
                 Math.round(accuracy) +
+
                 " meter";
+
         }
+
 
 
         /*
@@ -321,14 +752,18 @@
         ------------------------------------------------
         */
 
+
         function positionError(error) {
 
-            document.getElementById(
-                "status"
-            ).textContent =
-                "GPS fejl: " + error.message;
+
+            document
+                .getElementById("status")
+                .textContent =
+                "GPS fejl: " +
+                error.message;
 
         }
+
 
 
         /*
@@ -337,52 +772,89 @@
         ------------------------------------------------
         */
 
+
         function startGPS() {
+
+
+            /*
+            Kontrollér at browseren
+            understøtter Geolocation
+            */
+
 
             if (!navigator.geolocation) {
 
-                document.getElementById(
-                    "status"
-                ).textContent =
+
+                document
+                    .getElementById("status")
+                    .textContent =
                     "Denne browser understøtter ikke GPS.";
 
+
                 return;
+
             }
 
 
-            document.getElementById(
-                "status"
-            ).textContent =
+
+            /*
+            Vis status mens GPS
+            finder positionen
+            */
+
+
+            document
+                .getElementById("status")
+                .textContent =
                 "Finder GPS-position...";
+
+
+
+            /*
+            Start kontinuerlig GPS-opdatering
+            */
 
 
             navigator.geolocation.watchPosition(
 
+
                 positionUpdated,
+
 
                 positionError,
 
+
                 {
+
                     enableHighAccuracy: true,
+
                     timeout: 10000,
+
                     maximumAge: 0
+
                 }
+
 
             );
 
         }
 
 
+
         /*
-        Start når knappen trykkes
+        ------------------------------------------------
+        START GPS NÅR KNAPPEN TRYKKES
+        ------------------------------------------------
         */
 
-        document.getElementById(
-            "startButton"
-        ).addEventListener(
-            "click",
-            startGPS
-        );
+
+        document
+            .getElementById("startButton")
+            .addEventListener(
+                "click",
+                startGPS
+            );
+
 
     </script>
 
