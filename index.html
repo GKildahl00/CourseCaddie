@@ -25,12 +25,12 @@
 
         h1 {
             font-size: 24px;
-            margin-bottom: 5px;
+            margin-bottom: 12px;
         }
 
         .hole {
             font-size: 20px;
-            margin-bottom: 25px;
+            margin-bottom: 2px;
         }
 
         .hole-map-container {
@@ -38,8 +38,8 @@
 }
 
         .hole-map {
-            width: 60%;
-            max-width: 420px;
+            width: 100%;
+            max-width: 450px;
             height: auto;
             display: block;
             margin: 0 auto;
@@ -72,7 +72,7 @@
         button {
             width: 100%;
             padding: 16px;
-            margin-top: 20px;
+            margin-top: 6px;
             font-size: 16px;
             border: none;
             border-radius: 10px;
@@ -80,7 +80,7 @@
         }
 
         #status {
-            margin-top: 20px;
+            margin-top: 6px;
             color: #555;
         }
 
@@ -102,8 +102,15 @@
             Hul 1
         </div>
 
-        <div class="hole-map-container">
-            <img src="images/Lyngbygaard_9_hulsbanen_hul_1.png" alt="Baneoversigt hul 1" class="hole-map">
+        <button id="startButton">
+            Start GPS
+        </button>
+
+        <div id="status">
+            GPS er ikke startet
+        </div>
+
+        <div id="accuracy">
         </div>
 
         <div class="distance-box">
@@ -124,15 +131,8 @@
             <div class="unit">meter</div>
         </div>
 
-        <button id="startButton">
-            Start GPS
-        </button>
-
-        <div id="status">
-            GPS er ikke startet
-        </div>
-
-        <div id="accuracy">
+        <div class="hole-map-container">
+            <img src="images/Lyngbygaard_9_hulsbanen_hul_1.png" alt="Baneoversigt hul 1" class="hole-map">
         </div>
 
     </div>
