@@ -24,41 +24,56 @@
         }
 
         h1 {
+            font-size: 24px;
             margin-bottom: 5px;
         }
 
         .hole {
-            font-size: 24px;
+            font-size: 20px;
             margin-bottom: 25px;
+        }
+
+        .hole-map-container {
+    margin: 20px 0;
+}
+
+        .hole-map {
+            width: 60%;
+            max-width: 420px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
         .distance-box {
             background-color: white;
             margin: 12px 0;
-            padding: 20px;
+            padding: 12px;
             border-radius: 12px;
         }
 
         .label {
-            font-size: 18px;
+            font-size: 16px;
             color: #555;
         }
 
         .distance {
-            font-size: 48px;
+            font-size: 38px;
             font-weight: bold;
             margin-top: 5px;
         }
 
         .unit {
-            font-size: 18px;
+            font-size: 16px;
         }
 
         button {
             width: 100%;
             padding: 16px;
             margin-top: 20px;
-            font-size: 18px;
+            font-size: 16px;
             border: none;
             border-radius: 10px;
             cursor: pointer;
@@ -81,15 +96,19 @@
 
     <div class="container">
 
-        <h1>Lyngbygaard</h1>
+        <h1>Lyngbygaard SEGA 9-hulsbanen</h1>
 
         <div class="hole">
             Hul 1
         </div>
 
+        <div class="hole-map-container">
+            <img src="images/Lyngbygaard_9_hulsbanen_hul_1.png" alt="Baneoversigt hul 1" class="hole-map">
+        </div>
+
         <div class="distance-box">
-            <div class="label">FRONT</div>
-            <div class="distance" id="frontDistance">---</div>
+            <div class="label">BACK</div>
+            <div class="distance" id="backDistance">---</div>
             <div class="unit">meter</div>
         </div>
 
@@ -100,8 +119,8 @@
         </div>
 
         <div class="distance-box">
-            <div class="label">BAG</div>
-            <div class="distance" id="backDistance">---</div>
+            <div class="label">FRONT</div>
+            <div class="distance" id="frontDistance">---</div>
             <div class="unit">meter</div>
         </div>
 
