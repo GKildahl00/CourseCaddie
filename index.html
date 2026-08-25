@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="da">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -525,12 +525,12 @@
         <!-- HOVEDMENU -->
         <div id="mainMenuScreen" class="screen active">
             <div class="main-menu">
-                <h1>Velkommen til CourseCaddie</h1>
-                <div class="main-menu-subtitle">Vælg bane</div>
+                <h1>Welcome to CourseCaddie</h1>
+                <div class="main-menu-subtitle">Select course</div>
 
                 <div class="course-list">
                     <button id="segaCourseButton" class="course-button" type="button">
-                        <span class="course-name">Lyngbygaard SEGA 9-hulsbanen</span>
+                        <span class="course-name">Lyngbygaard SEGA 9-hole course</span>
                         <span class="course-info">
                             <ul>
                                 <li>Par: 33</li>
@@ -544,7 +544,7 @@
                     </button>
 
                     <button id="mainCourseButton" class="course-button" type="button">
-                        <span class="course-name">Lyngbygaard 18-hulsbanen</span>
+                        <span class="course-name">Lyngbygaard 18-hole course</span>
                         <span class="course-info">
                             <ul>
                                 <li>Par: 72</li>
@@ -564,25 +564,25 @@
         <div id="courseScreen" class="screen">
 
             <div class="screen-header">
-                <button id="homeButton" class="home-button" type="button" aria-label="Tilbage til hovedmenu">
+                <button id="homeButton" class="home-button" type="button" aria-label="Back to main menu">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M12 3 L2.5 11 H5 V21 H10 V15 H14 V21 H19 V11 H21.5 Z" />
                     </svg>
                 </button>
 
-                <h1 id="courseTitle">Bane</h1>
+                <h1 id="courseTitle">Course</h1>
             </div>
 
             <div class="hole-navigation">
-                <button id="prevHoleButton" class="hole-nav-button" type="button" aria-label="Forrige hul">
+                <button id="prevHoleButton" class="hole-nav-button" type="button" aria-label="Previous hole">
                     ◀
                 </button>
 
                 <div class="hole" id="holeTitle">
-                    Hul 1
+                    Hole 1
                 </div>
 
-                <button id="nextHoleButton" class="hole-nav-button" type="button" aria-label="Næste hul">
+                <button id="nextHoleButton" class="hole-nav-button" type="button" aria-label="Next hole">
                     ▶
                 </button>
             </div>
@@ -592,7 +592,7 @@
             </button>
 
             <div id="status">
-                GPS er ikke startet
+                GPS is not started
             </div>
 
             <div id="accuracy"></div>
@@ -603,19 +603,19 @@
                     <div class="distance-box">
                         <div class="label">BACK</div>
                         <div class="distance" id="backDistance">---</div>
-                        <div class="unit">meter</div>
+                        <div class="unit">meters</div>
                     </div>
 
                     <div class="distance-box">
                         <div class="label">CENTER</div>
                         <div class="distance" id="centerDistance">---</div>
-                        <div class="unit">meter</div>
+                        <div class="unit">meters</div>
                     </div>
 
                     <div class="distance-box">
                         <div class="label">FRONT</div>
                         <div class="distance" id="frontDistance">---</div>
-                        <div class="unit">meter</div>
+                        <div class="unit">meters</div>
                     </div>
 
                 </div>
@@ -624,7 +624,7 @@
                     <img
                         id="holeMap"
                         src="images/Lyngbygaard_9_hulsbanen_hul_1.png"
-                        alt="Baneoversigt hul 1"
+                        alt="Course overview - Hole 1"
                         class="hole-map"
                     >
                 </div>
@@ -648,7 +648,7 @@
             id="imageViewerClose"
             class="image-viewer-close"
             type="button"
-            aria-label="Luk baneoversigt"
+            aria-label="Close course overview"
         >
             ×
         </button>
@@ -663,7 +663,7 @@
                 id="imageViewerImage"
                 class="image-viewer-image"
                 src=""
-                alt="Forstørret baneoversigt"
+                alt="Enlarged course overview"
                 draggable="false"
             >
 
@@ -769,7 +769,7 @@
 
         const courses = {
             sega: {
-                name: "Lyngbygaard SEGA 9-hulsbanen",
+                name: "Lyngbygaard SEGA 9-hole course",
                 holes: [
                 {
                     number: 1,
@@ -838,7 +838,7 @@
             },
 
             main18: {
-                name: "Lyngbygaard 18-hulsbanen",
+                name: "Lyngbygaard 18-hole course",
                 holes: [
                 {
                     number: 1,
@@ -1005,7 +1005,7 @@
         }
 
         function openCourse(courseKey) {
-            stopGPS("GPS er ikke startet");
+            stopGPS("GPS is not started");
 
             currentCourseKey = courseKey;
             currentHoleIndex = 0;
@@ -1017,7 +1017,7 @@
         }
 
         function goHome() {
-            stopGPS("GPS er ikke startet");
+            stopGPS("GPS is not started");
             currentCourseKey = null;
             currentHoleIndex = 0;
             showScreen("mainMenuScreen");
@@ -1110,23 +1110,23 @@
             updateDistances(position);
 
             document.getElementById("status").textContent =
-                "GPS aktiv";
+                "GPS active";
 
             document.getElementById("accuracy").textContent =
-                "Estimeret GPS-nøjagtighed: ±" +
+                "Estimated GPS accuracy: ±" +
                 Math.round(position.coords.accuracy) +
-                " meter";
+                " meters";
         }
 
         function positionError(error) {
             document.getElementById("status").textContent =
-                "GPS fejl: " + error.message;
+                "GPS error: " + error.message;
         }
 
         function startGPS() {
             if (!navigator.geolocation) {
                 document.getElementById("status").textContent =
-                    "Denne browser understøtter ikke GPS.";
+                    "This browser does not support GPS.";
                 return;
             }
 
@@ -1135,7 +1135,7 @@
             }
 
             document.getElementById("status").textContent =
-                "Finder GPS-position...";
+                "Finding GPS position...";
 
             watchId = navigator.geolocation.watchPosition(
                 positionUpdated,
@@ -1154,7 +1154,7 @@
             button.setAttribute("aria-pressed", "true");
         }
 
-        function stopGPS(statusText = "GPS stoppet") {
+        function stopGPS(statusText = "GPS stopped") {
             if (watchId !== null) {
                 navigator.geolocation.clearWatch(watchId);
                 watchId = null;
@@ -1202,13 +1202,13 @@
             const currentHole = getCurrentHole();
 
             document.getElementById("holeTitle").textContent =
-                "Hul " + currentHole.number;
+                "Hole " + currentHole.number;
 
             const holeMap = document.getElementById("holeMap");
 
             holeMap.src = currentHole.image;
             holeMap.alt =
-                "Baneoversigt hul " +
+                "Course overview - Hole " +
                 currentHole.number +
                 " - " +
                 currentCourse.name;

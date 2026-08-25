@@ -1,7 +1,7 @@
 {
     "name": "CourseCaddie",
     "short_name": "CourseCaddie",
-    "description": "Golf GPS med afstand til front, center og back på green.",
+    "description": "Golf GPS with distances to the front, center and back of the green.",
     "start_url": "./",
     "scope": "./",
     "display": "standalone",
