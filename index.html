@@ -532,36 +532,83 @@
         aktuelle højde, så layoutet altid kan tilpasse sig.
         */
 
-        function updateVisibleHeight() {
-            const visibleHeight =
-                window.visualViewport
-                    ? window.visualViewport.height
-                    : window.innerHeight;
+function updateVisibleHeight(forceUpdate = false) {
 
-            document.documentElement.style.setProperty(
-                "--app-height",
-                visibleHeight + "px"
-            );
-        }
+    const viewport = window.visualViewport;
 
-        updateVisibleHeight();
+    /*
+    Hvis brugeren pinch-zoomer, må layoutet IKKE
+    beregne sin størrelse igen.
+    */
+    if (
+        viewport &&
+        !forceUpdate &&
+        Math.abs(viewport.scale - 1) > 0.01
+    ) {
+        return;
+    }
 
-        window.addEventListener(
-            "resize",
-            updateVisibleHeight
+    const visibleHeight =
+        viewport
+            ? viewport.height
+            : window.innerHeight;
+
+    document.documentElement.style.setProperty(
+        "--app-height",
+        visibleHeight + "px"
+    );
+}
+
+
+/*
+Første indlæsning
+*/
+updateVisibleHeight(true);
+
+
+/*
+Normal ændring af vinduets størrelse
+*/
+window.addEventListener(
+    "resize",
+    function () {
+        updateVisibleHeight(false);
+    }
+);
+
+
+/*
+Telefonen drejes
+*/
+window.addEventListener(
+    "orientationchange",
+    function () {
+
+        setTimeout(
+            function () {
+                updateVisibleHeight(true);
+            },
+            150
         );
 
-        window.addEventListener(
-            "orientationchange",
-            updateVisibleHeight
-        );
+    }
+);
 
-        if (window.visualViewport) {
-            window.visualViewport.addEventListener(
-                "resize",
-                updateVisibleHeight
-            );
+
+/*
+Safari viser/skjuler sine bjælker.
+Men pinch-zoom ignoreres.
+*/
+if (window.visualViewport) {
+
+    window.visualViewport.addEventListener(
+        "resize",
+        function () {
+            updateVisibleHeight(false);
         }
+    );
+
+}
 
 
         /*
