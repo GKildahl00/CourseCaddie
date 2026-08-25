@@ -6,7 +6,7 @@
 
 <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
 >
 
     <title>CourseCaddie</title>
@@ -47,11 +47,6 @@
             text-align: center;
         }
 
-        html,
-        body {
-            touch-action: pan-x pan-y pinch-zoom;
-        }
-
         .container {
             width: 100%;
             max-width: 650px;
@@ -75,7 +70,7 @@
             flex-direction: column;
             height: calc(var(--app-height, 100dvh) - 24px);
             min-height: 0;
-            overflow: auto;
+            overflow: hidden;
         }
 
         /* ------------------------------------------------
@@ -367,6 +362,121 @@
             object-position: center top;
         }
 
+        /*
+        ------------------------------------------------
+        BANEOVERSIGT - FULDSKÆRMSVISNING
+        ------------------------------------------------
+        */
+
+        .hole-map {
+            cursor: zoom-in;
+        }
+
+
+        /*
+        Selve full-screen billedviseren
+        */
+        .image-viewer {
+            position: fixed;
+
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+
+            z-index: 9999;
+
+            display: none;
+
+            background-color: #f4f4f4;
+
+            overflow: hidden;
+
+            touch-action: none;
+
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+
+        /*
+        Når billedviseren er åben
+        */
+        .image-viewer.open {
+            display: block;
+        }
+
+
+        /*
+        Området hvor billedet kan zoomes
+        */
+        .image-viewer-stage {
+            width: 100%;
+            height: 100%;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            overflow: hidden;
+
+            touch-action: none;
+        }
+
+
+        /*
+        Det store baneoversigtsbillede
+        */
+        .image-viewer-image {
+            width: 100%;
+            height: 100%;
+
+            object-fit: contain;
+
+            transform-origin: center center;
+
+            user-select: none;
+
+            -webkit-user-drag: none;
+
+            touch-action: none;
+
+            will-change: transform;
+        }
+
+
+        /*
+        Luk-knappen
+        */
+        .image-viewer-close {
+            position: absolute;
+
+            top: calc(12px + env(safe-area-inset-top));
+            right: 12px;
+
+            z-index: 10000;
+
+            width: 48px;
+            height: 48px;
+
+            border: none;
+            border-radius: 50%;
+
+            background-color: rgba(255, 255, 255, 0.9);
+
+            color: #222;
+
+            font-size: 32px;
+            line-height: 1;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            cursor: pointer;
+        }
+
         @media (max-width: 360px) {
             body {
                 padding: 8px;
@@ -521,6 +631,45 @@
         </div>
     </div>
 
+    <!--
+    ================================================================
+    FULDSKÆRMS BANEOVERSIGT
+    ================================================================
+    -->
+
+    <div
+        id="imageViewer"
+        class="image-viewer"
+        aria-hidden="true"
+    >
+
+        <button
+            id="imageViewerClose"
+            class="image-viewer-close"
+            type="button"
+            aria-label="Luk baneoversigt"
+        >
+            ×
+        </button>
+
+
+        <div
+            id="imageViewerStage"
+            class="image-viewer-stage"
+        >
+
+            <img
+                id="imageViewerImage"
+                class="image-viewer-image"
+                src=""
+                alt="Forstørret baneoversigt"
+                draggable="false"
+            >
+
+        </div>
+
+    </div>
+
     <script>
         /*
         ================================================================
@@ -532,87 +681,87 @@
         aktuelle højde, så layoutet altid kan tilpasse sig.
         */
 
-function updateVisibleHeight(forceUpdate = false) {
+        function updateVisibleHeight(forceUpdate = false) {
 
-    const viewport = window.visualViewport;
+            const viewport = window.visualViewport;
 
-    /*
-    Hvis brugeren pinch-zoomer, må layoutet IKKE
-    beregne sin størrelse igen.
-    */
-    if (
-        viewport &&
-        !forceUpdate &&
-        Math.abs(viewport.scale - 1) > 0.01
-    ) {
-        return;
-    }
+            /*
+            Hvis brugeren pinch-zoomer, må layoutet IKKE
+            beregne sin størrelse igen.
+            */
+            if (
+                viewport &&
+                !forceUpdate &&
+                Math.abs(viewport.scale - 1) > 0.01
+            ) {
+                return;
+            }
 
-    const visibleHeight =
-        viewport
-            ? viewport.height
-            : window.innerHeight;
+            const visibleHeight =
+                viewport
+                    ? viewport.height
+                    : window.innerHeight;
 
-    document.documentElement.style.setProperty(
-        "--app-height",
-        visibleHeight + "px"
-    );
-}
-
-
-/*
-Første indlæsning
-*/
-updateVisibleHeight(true);
-
-
-/*
-Normal ændring af vinduets størrelse
-*/
-window.addEventListener(
-    "resize",
-    function () {
-        updateVisibleHeight(false);
-    }
-);
-
-
-/*
-Telefonen drejes
-*/
-window.addEventListener(
-    "orientationchange",
-    function () {
-
-        setTimeout(
-            function () {
-                updateVisibleHeight(true);
-            },
-            150
-        );
-
-    }
-);
-
-
-/*
-Safari viser/skjuler sine bjælker.
-Men pinch-zoom ignoreres.
-*/
-if (window.visualViewport) {
-
-    window.visualViewport.addEventListener(
-        "resize",
-        function () {
-            updateVisibleHeight(false);
+            document.documentElement.style.setProperty(
+                "--app-height",
+                visibleHeight + "px"
+            );
         }
-    );
-
-}
 
 
         /*
-        ================================================================
+        Første indlæsning
+        */
+        updateVisibleHeight(true);
+
+
+        /*
+        Normal ændring af vinduets størrelse
+        */
+        window.addEventListener(
+            "resize",
+            function () {
+                updateVisibleHeight(false);
+            }
+        );
+
+
+        /*
+        Telefonen drejes
+        */
+        window.addEventListener(
+            "orientationchange",
+            function () {
+
+                setTimeout(
+                    function () {
+                        updateVisibleHeight(true);
+                    },
+                    150
+                );
+
+            }
+        );
+
+
+        /*
+        Safari viser/skjuler sine bjælker.
+        Men pinch-zoom ignoreres.
+        */
+        if (window.visualViewport) {
+
+            window.visualViewport.addEventListener(
+                "resize",
+                function () {
+                    updateVisibleHeight(false);
+                }
+            );
+
+        }
+
+
+                /*
+                ================================================================
         BANEDATA
         ================================================================
         */
@@ -1076,8 +1225,519 @@ if (window.visualViewport) {
             }
         }
 
-        /*
+                /*
         ================================================================
+        BANEOVERSIGT - FULDSKÆRMS ZOOM
+        ================================================================
+        */
+
+        const imageViewer =
+            document.getElementById(
+                "imageViewer"
+            );
+
+
+        const imageViewerStage =
+            document.getElementById(
+                "imageViewerStage"
+            );
+
+
+        const imageViewerImage =
+            document.getElementById(
+                "imageViewerImage"
+            );
+
+
+        const imageViewerClose =
+            document.getElementById(
+                "imageViewerClose"
+            );
+
+
+        const holeMap =
+            document.getElementById(
+                "holeMap"
+            );
+
+
+        /*
+        Zoom-indstillinger
+        */
+
+        let viewerScale = 1;
+
+        let viewerTranslateX = 0;
+        let viewerTranslateY = 0;
+
+        const viewerMinScale = 1;
+        const viewerMaxScale = 5;
+
+
+        /*
+        Aktive fingre / pointere
+        */
+
+        const activePointers =
+            new Map();
+
+
+        let previousPinchDistance = null;
+
+        let previousPanX = null;
+        let previousPanY = null;
+
+
+        /*
+        ------------------------------------------------
+        OPDATER BILLEDETS POSITION
+        ------------------------------------------------
+        */
+
+        function updateViewerTransform() {
+
+            imageViewerImage.style.transform =
+                "translate(" +
+                viewerTranslateX +
+                "px, " +
+                viewerTranslateY +
+                "px) scale(" +
+                viewerScale +
+                ")";
+        }
+
+
+        /*
+        ------------------------------------------------
+        NULSTIL ZOOM
+        ------------------------------------------------
+        */
+
+        function resetImageViewer() {
+
+            viewerScale = 1;
+
+            viewerTranslateX = 0;
+            viewerTranslateY = 0;
+
+            previousPinchDistance = null;
+
+            previousPanX = null;
+            previousPanY = null;
+
+            activePointers.clear();
+
+            updateViewerTransform();
+        }
+
+
+        /*
+        ------------------------------------------------
+        ÅBN BANEOVERSIGT
+        ------------------------------------------------
+        */
+
+        function openImageViewer() {
+
+            /*
+            Brug præcis det billede som vises
+            på det aktuelle hul.
+            */
+
+            imageViewerImage.src =
+                holeMap.src;
+
+
+            imageViewerImage.alt =
+                holeMap.alt;
+
+
+            resetImageViewer();
+
+
+            imageViewer.classList.add(
+                "open"
+            );
+
+
+            imageViewer.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+        }
+
+
+        /*
+        ------------------------------------------------
+        LUK BANEOVERSIGT
+        ------------------------------------------------
+        */
+
+        function closeImageViewer() {
+
+            imageViewer.classList.remove(
+                "open"
+            );
+
+
+            imageViewer.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+
+            resetImageViewer();
+        }
+
+
+        /*
+        ------------------------------------------------
+        AFSTAND MELLEM TO FINGRE
+        ------------------------------------------------
+        */
+
+        function getPointerDistance(
+            pointer1,
+            pointer2
+        ) {
+
+            const deltaX =
+                pointer2.x -
+                pointer1.x;
+
+
+            const deltaY =
+                pointer2.y -
+                pointer1.y;
+
+
+            return Math.hypot(
+                deltaX,
+                deltaY
+            );
+        }
+
+
+        /*
+        ------------------------------------------------
+        FINGER NED
+        ------------------------------------------------
+        */
+
+        imageViewerStage.addEventListener(
+            "pointerdown",
+            function (event) {
+
+                imageViewerStage.setPointerCapture(
+                    event.pointerId
+                );
+
+
+                activePointers.set(
+                    event.pointerId,
+                    {
+                        x: event.clientX,
+                        y: event.clientY
+                    }
+                );
+
+
+                /*
+                Én finger:
+                start panorering.
+                */
+
+                if (
+                    activePointers.size === 1
+                ) {
+
+                    previousPanX =
+                        event.clientX;
+
+                    previousPanY =
+                        event.clientY;
+                }
+
+
+                /*
+                To fingre:
+                start pinch.
+                */
+
+                if (
+                    activePointers.size === 2
+                ) {
+
+                    const pointers =
+                        Array.from(
+                            activePointers.values()
+                        );
+
+
+                    previousPinchDistance =
+                        getPointerDistance(
+                            pointers[0],
+                            pointers[1]
+                        );
+                }
+            }
+        );
+
+
+        /*
+        ------------------------------------------------
+        FINGER BEVÆGES
+        ------------------------------------------------
+        */
+
+        imageViewerStage.addEventListener(
+            "pointermove",
+            function (event) {
+
+                if (
+                    !activePointers.has(
+                        event.pointerId
+                    )
+                ) {
+
+                    return;
+                }
+
+
+                activePointers.set(
+                    event.pointerId,
+                    {
+                        x: event.clientX,
+                        y: event.clientY
+                    }
+                );
+
+
+                /*
+                TO FINGRE:
+                PINCH ZOOM
+                */
+
+                if (
+                    activePointers.size === 2
+                ) {
+
+                    const pointers =
+                        Array.from(
+                            activePointers.values()
+                        );
+
+
+                    const currentDistance =
+                        getPointerDistance(
+                            pointers[0],
+                            pointers[1]
+                        );
+
+
+                    if (
+                        previousPinchDistance !== null
+                    ) {
+
+                        const scaleChange =
+                            currentDistance /
+                            previousPinchDistance;
+
+
+                        viewerScale *=
+                            scaleChange;
+
+
+                        viewerScale =
+                            Math.min(
+                                viewerMaxScale,
+                                Math.max(
+                                    viewerMinScale,
+                                    viewerScale
+                                )
+                            );
+
+
+                        /*
+                        Hvis vi zoomer helt ud,
+                        centreres billedet igen.
+                        */
+
+                        if (
+                            viewerScale ===
+                            viewerMinScale
+                        ) {
+
+                            viewerTranslateX = 0;
+                            viewerTranslateY = 0;
+                        }
+
+
+                        updateViewerTransform();
+                    }
+
+
+                    previousPinchDistance =
+                        currentDistance;
+
+
+                    return;
+                }
+
+
+                /*
+                ÉN FINGER:
+                PANORÉR HVIS DER ER ZOOMET IND
+                */
+
+                if (
+                    activePointers.size === 1 &&
+                    viewerScale > 1
+                ) {
+
+                    if (
+                        previousPanX !== null &&
+                        previousPanY !== null
+                    ) {
+
+                        const deltaX =
+                            event.clientX -
+                            previousPanX;
+
+
+                        const deltaY =
+                            event.clientY -
+                            previousPanY;
+
+
+                        viewerTranslateX +=
+                            deltaX;
+
+
+                        viewerTranslateY +=
+                            deltaY;
+
+
+                        updateViewerTransform();
+                    }
+
+
+                    previousPanX =
+                        event.clientX;
+
+
+                    previousPanY =
+                        event.clientY;
+                }
+            }
+        );
+
+
+        /*
+        ------------------------------------------------
+        FINGER SLIPPES
+        ------------------------------------------------
+        */
+
+        function removeViewerPointer(
+            event
+        ) {
+
+            activePointers.delete(
+                event.pointerId
+            );
+
+
+            previousPinchDistance =
+                null;
+
+
+            /*
+            Hvis én finger stadig er på
+            skærmen efter pinch, bruger vi
+            den som startpunkt for panorering.
+            */
+
+            if (
+                activePointers.size === 1
+            ) {
+
+                const remainingPointer =
+                    Array.from(
+                        activePointers.values()
+                    )[0];
+
+
+                previousPanX =
+                    remainingPointer.x;
+
+
+                previousPanY =
+                    remainingPointer.y;
+
+            } else {
+
+                previousPanX =
+                    null;
+
+                previousPanY =
+                    null;
+            }
+        }
+
+
+        imageViewerStage.addEventListener(
+            "pointerup",
+            removeViewerPointer
+        );
+
+
+        imageViewerStage.addEventListener(
+            "pointercancel",
+            removeViewerPointer
+        );
+
+
+        /*
+        ------------------------------------------------
+        ÅBN / LUK
+        ------------------------------------------------
+        */
+
+        holeMap.addEventListener(
+            "click",
+            openImageViewer
+        );
+
+
+        imageViewerClose.addEventListener(
+            "click",
+            closeImageViewer
+        );
+
+
+        /*
+        Escape på computer
+        */
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Escape" &&
+                    imageViewer.classList.contains(
+                        "open"
+                    )
+                ) {
+
+                    closeImageViewer();
+                }
+            }
+        );
+
+                /*
+                ================================================================
         EVENT LISTENERS
         ================================================================
         */
