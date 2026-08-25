@@ -1,0 +1,22 @@
+{
+    "name": "CourseCaddie",
+    "short_name": "CourseCaddie",
+    "description": "Golf GPS med afstand til front, center og back på green.",
+    "start_url": "./",
+    "scope": "./",
+    "display": "standalone",
+    "background_color": "#f4f4f4",
+    "theme_color": "#f4f4f4",
+    "icons": [
+        {
+            "src": "./icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "./icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
