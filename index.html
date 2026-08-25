@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    >
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover"
+>
 
     <title>CourseCaddie</title>
 
@@ -47,6 +47,11 @@
             text-align: center;
         }
 
+        html,
+        body {
+            touch-action: pan-x pan-y pinch-zoom;
+        }
+
         .container {
             width: 100%;
             max-width: 650px;
@@ -70,7 +75,7 @@
             flex-direction: column;
             height: calc(var(--app-height, 100dvh) - 24px);
             min-height: 0;
-            overflow: hidden;
+            overflow: auto;
         }
 
         /* ------------------------------------------------
