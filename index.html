@@ -456,7 +456,7 @@
             padding: 8px 12px;
 
             display: grid;
-            grid-template-columns: 82px minmax(0, 1fr);
+            grid-template-columns: 82px minmax(0, 1fr) auto;
             gap: 13px;
             align-items: center;
 
@@ -657,6 +657,8 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+
+            align-self: stretch;
         }
 
         .wind-label {
@@ -700,6 +702,46 @@
             letter-spacing: 0.3px;
 
             color: #333;
+        }
+
+        .wind-plays-like {
+            width: 132px;
+            min-width: 132px;
+
+            margin-top: 0;
+
+            align-self: center;
+            justify-self: end;
+
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+
+            text-align: left;
+            line-height: 1.1;
+
+            color: #147a36;
+        }
+
+        .wind-plays-like-top {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .wind-plays-like-value {
+            margin-top: 2px;
+
+            font-size: 23px;
+            font-weight: 700;
+        }
+
+        .wind-plays-like-target {
+            margin-top: 2px;
+
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
         }
 
         .wind-status {
@@ -1191,6 +1233,29 @@
                     </div>
 
                 </div>
+
+                <div
+                    id="windPlaysLike"
+                    class="wind-plays-like"
+                >
+                    <span class="wind-plays-like-top">
+                        Plays like
+                    </span>
+
+                    <span
+                        id="windPlaysLikeValue"
+                        class="wind-plays-like-value"
+                    >
+                        -- m
+                    </span>
+
+                    <span
+                        id="windPlaysLikeTarget"
+                        class="wind-plays-like-target"
+                    >
+                        to CENTER
+                    </span>
+                </div>
             </div>
 
             <div class="hole-layout">
@@ -1623,6 +1688,12 @@
         let watchId = null;
         let latestPosition = null;
 
+        /*
+        Latest measured GPS distance to the center of the green.
+        Used only for the wind-adjusted "plays like" estimate.
+        */
+        let centerDistanceMeters = null;
+
         function getCurrentCourse() {
             return courses[currentCourseKey];
         }
@@ -1721,6 +1792,9 @@
                 currentHole.center.lon
             );
 
+            centerDistanceMeters =
+                distanceCenter;
+
             const distanceBack = calculateDistance(
                 myLatitude,
                 myLongitude,
@@ -1762,6 +1836,24 @@
         const windFromElement =
             document.getElementById(
                 "windFrom"
+            );
+
+
+        const windPlaysLikeElement =
+            document.getElementById(
+                "windPlaysLike"
+            );
+
+
+        const windPlaysLikeValueElement =
+            document.getElementById(
+                "windPlaysLikeValue"
+            );
+
+
+        const windPlaysLikeTargetElement =
+            document.getElementById(
+                "windPlaysLikeTarget"
             );
 
 
@@ -1845,6 +1937,67 @@
 
 
         /*
+        Estimate how far the shot "plays like" to the center.
+
+        relativeWindFrom:
+        0°   = direct headwind
+        90°  = pure crosswind
+        180° = direct tailwind
+
+        Practical rule used here:
+        - headwind: +2 meters per 1 m/s effective headwind
+        - tailwind: -1 meter per 1 m/s effective tailwind
+
+        Only the head/tail component of the wind is used.
+        Crosswind itself does not change this distance estimate.
+        */
+        function calculatePlaysLikeCenter(
+            actualDistance,
+            windSpeed,
+            relativeWindFrom
+        ) {
+
+            const angleRadians =
+                relativeWindFrom *
+                Math.PI /
+                180;
+
+
+            const alongShotWind =
+                windSpeed *
+                Math.cos(
+                    angleRadians
+                );
+
+
+            let windAdjustment = 0;
+
+
+            if (
+                alongShotWind >= 0
+            ) {
+
+                windAdjustment =
+                    alongShotWind * 2;
+
+            } else {
+
+                windAdjustment =
+                    alongShotWind;
+            }
+
+
+            return Math.max(
+                0,
+                Math.round(
+                    actualDistance +
+                    windAdjustment
+                )
+            );
+        }
+
+
+        /*
         ------------------------------------------------
         UPDATE WIND UI
         ------------------------------------------------
@@ -1862,6 +2015,12 @@
 
                 windFromElement.textContent =
                     "FROM --°";
+
+                windPlaysLikeValueElement.textContent =
+                    "-- m";
+
+                windPlaysLikeTargetElement.textContent =
+                    "to CENTER";
 
                 windArrowRotator.style.transform =
                     "rotate(0deg)";
@@ -1885,6 +2044,12 @@
 
                 windFromElement.textContent =
                     "FROM --°";
+
+                windPlaysLikeValueElement.textContent =
+                    "-- m";
+
+                windPlaysLikeTargetElement.textContent =
+                    "to CENTER";
 
                 windArrowRotator.style.transform =
                     "rotate(0deg)";
@@ -1943,6 +2108,35 @@
                     "0"
                 ) +
                 "°";
+
+
+            if (
+                centerDistanceMeters !== null
+            ) {
+
+                const playsLikeCenter =
+                    calculatePlaysLikeCenter(
+                        centerDistanceMeters,
+                        windSpeedMs,
+                        relativeWindFrom
+                    );
+
+
+                windPlaysLikeValueElement.textContent =
+                    playsLikeCenter +
+                    " m";
+
+                windPlaysLikeTargetElement.textContent =
+                    "to CENTER";
+
+            } else {
+
+                windPlaysLikeValueElement.textContent =
+                    "-- m";
+
+                windPlaysLikeTargetElement.textContent =
+                    "to CENTER";
+            }
 
 
             if (
@@ -2465,6 +2659,14 @@
 
             windFromElement.textContent =
                 "FROM --°";
+
+            windPlaysLikeValueElement.textContent =
+                "-- m";
+
+            windPlaysLikeTargetElement.textContent =
+                "to CENTER";
+
+            centerDistanceMeters = null;
 
             windStatusElement.textContent =
                 "Start GPS for wind";
