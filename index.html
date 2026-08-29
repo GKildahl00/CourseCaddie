@@ -62,6 +62,62 @@
         }
 
         /*
+        ------------------------------------------------
+        OPSTART / SPLASH SCREEN
+        ------------------------------------------------
+        */
+
+        .splash-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 20000;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            padding:
+                env(safe-area-inset-top)
+                24px
+                env(safe-area-inset-bottom);
+
+            background-color: #f4f4f4;
+
+            opacity: 1;
+            transition: opacity 0.28s ease;
+        }
+
+        .splash-screen.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .splash-logo {
+            width: clamp(280px, 42vw, 310px);
+            height: clamp(280px, 42vw, 310px);
+
+            object-fit: cover;
+            border-radius: 28px;
+        }
+
+        .splash-title {
+            margin-top: 18px;
+
+            font-size: clamp(56px, 8vw, 66px);
+            font-weight: 700;
+            letter-spacing: -0.8px;
+
+            color: #1c1c1e;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .splash-screen {
+                transition: none;
+            }
+        }
+
+        /*
         GPS-skærmen fylder præcis den synlige browserhøjde.
         Den indre baneoversigt får resten af pladsen og skaleres.
         */
@@ -102,11 +158,17 @@
         .course-button {
             width: 100%;
             padding: 22px 18px;
-            border: none;
-            border-radius: 14px;
+
+            border: 1px solid #e5e5e7;
+            border-radius: 16px;
+
             background-color: white;
+
             text-align: left;
+
             cursor: pointer;
+
+            -webkit-tap-highlight-color: transparent;
         }
 
         .course-button:active {
@@ -150,30 +212,47 @@
 
         .home-button {
             position: absolute;
-            top: 0;
+
+            top: 4px;
             left: 0;
-            width: 58px;
-            height: 58px;
+
+            width: 44px;
+            height: 44px;
+
             padding: 0;
+
             display: flex;
             align-items: center;
             justify-content: center;
-            border: none;
-            border-radius: 10px;
-            background: transparent;
+
+            border: 1px solid #dedede;
+            border-radius: 50%;
+
+            background-color: white;
+
             cursor: pointer;
-            color: #007710;
+
+            color: #147a36;
+
+            -webkit-tap-highlight-color: transparent;
         }
 
         .home-button svg {
-            width: 48px;
-            height: 48px;
+            width: 23px;
+            height: 23px;
+
             display: block;
-            fill: currentColor;
+
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.9;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         .home-button:active {
-            background-color: #e5e5e5;
+            transform: scale(0.94);
+            background-color: #f0f0f0;
         }
 
         /* ------------------------------------------------
@@ -197,25 +276,41 @@
 
         .hole-nav-button {
             position: absolute;
-            top: 60%;
-            width: 100px;
-            height: 100px;
+
+            top: 58%;
+
+            width: 44px;
+            height: 44px;
+
             padding: 0;
-            border: none;
-            background: transparent;
-            color: #007710;
-            font-size: 32px;
+
+            border: 1px solid #dedede;
+            border-radius: 50%;
+
+            background-color: white;
+
+            color: #147a36;
+
+            font-size: 22px;
             line-height: 1;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
             cursor: pointer;
+
             transform: translateY(-50%);
+
+            -webkit-tap-highlight-color: transparent;
         }
 
         #prevHoleButton {
-            left: 64px;
+            left: clamp(58px, 18vw, 92px);
         }
 
         #nextHoleButton {
-            right: 64px;
+            right: clamp(58px, 18vw, 92px);
         }
 
         .hole-nav-button:disabled {
@@ -223,7 +318,8 @@
         }
 
         .hole-nav-button:active {
-            opacity: 0.5;
+            transform: translateY(-50%) scale(0.94);
+            background-color: #f0f0f0;
         }
 
         /* ------------------------------------------------
@@ -236,15 +332,17 @@
             margin-top: 2px;
             flex: 0 0 auto;
             font-size: 16px;
-            border: none;
-            border-radius: 10px;
-            background-color: #e9e9e9;
-            color: #007aff;
+            border: 1px solid #dedede;
+            border-radius: 12px;
+            background-color: white;
+            color: #147a36;
+            font-weight: 600;
             cursor: pointer;
             transition: background-color 0.2s, color 0.2s;
         }
 
         #startButton.gps-active {
+            border-color: #d93636;
             background-color: #d93636;
             color: white;
         }
@@ -389,7 +487,7 @@
 
             display: none;
 
-            background-color: #f4f4f4;
+            background-color: #111111;
 
             overflow: hidden;
 
@@ -430,8 +528,13 @@
         Det store baneoversigtsbillede
         */
         .image-viewer-image {
-            width: 100%;
-            height: 100%;
+            width: auto;
+            height: auto;
+
+            max-width: 100%;
+            max-height: 100%;
+
+            display: block;
 
             object-fit: contain;
 
@@ -520,6 +623,30 @@
 </head>
 
 <body>
+
+    <!--
+    ================================================================
+    COURSE CADDIE SPLASH SCREEN
+    ================================================================
+    -->
+
+    <div
+        id="splashScreen"
+        class="splash-screen"
+        aria-hidden="false"
+    >
+        <img
+            class="splash-logo"
+            src="./icons/loading_screen_pic.png"
+            alt="CourseCaddie logo"
+        >
+
+        <div class="splash-title">
+            CourseCaddie
+        </div>
+    </div>
+
+
     <div class="container">
 
         <!-- HOVEDMENU -->
@@ -566,7 +693,9 @@
             <div class="screen-header">
                 <button id="homeButton" class="home-button" type="button" aria-label="Back to main menu">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M12 3 L2.5 11 H5 V21 H10 V15 H14 V21 H19 V11 H21.5 Z" />
+                        <path
+                            d="M3.5 10.5 12 3.5l8.5 7v8.25A1.75 1.75 0 0 1 18.75 20.5H14v-6h-4v6H5.25A1.75 1.75 0 0 1 3.5 18.75Z"
+                        />
                     </svg>
                 </button>
 
@@ -672,6 +801,52 @@
     </div>
 
     <script>
+        /*
+        ================================================================
+        COURSE CADDIE SPLASH SCREEN
+        ================================================================
+        */
+
+        const splashScreen =
+            document.getElementById(
+                "splashScreen"
+            );
+
+
+        window.addEventListener(
+            "load",
+            function () {
+
+                setTimeout(
+                    function () {
+
+                        splashScreen.classList.add(
+                            "hide"
+                        );
+
+
+                        setTimeout(
+                            function () {
+
+                                splashScreen.style.display =
+                                    "none";
+
+                                splashScreen.setAttribute(
+                                    "aria-hidden",
+                                    "true"
+                                );
+
+                            },
+                            300
+                        );
+
+                    },
+                    1050
+                );
+            }
+        );
+
+
         /*
         ================================================================
         SYNLIG SAFARI-HØJDE
@@ -1228,7 +1403,7 @@
 
                 /*
         ================================================================
-        BANEOVERSIGT - FULDSKÆRMS ZOOM
+        COURSE OVERVIEW - FULLSCREEN ZOOM
         ================================================================
         */
 
@@ -1263,7 +1438,7 @@
 
 
         /*
-        Zoom-indstillinger
+        Zoom state
         */
 
         let viewerScale = 1;
@@ -1276,7 +1451,7 @@
 
 
         /*
-        Aktive fingre / pointere
+        Active touch pointers
         */
 
         const activePointers =
@@ -1284,18 +1459,141 @@
 
 
         let previousPinchDistance = null;
+        let previousPinchCenter = null;
 
-        let previousPanX = null;
-        let previousPanY = null;
+        let previousPanPoint = null;
 
 
         /*
         ------------------------------------------------
-        OPDATER BILLEDETS POSITION
+        POINTER HELPERS
+        ------------------------------------------------
+        */
+
+        function getPointerDistance(
+            pointer1,
+            pointer2
+        ) {
+
+            return Math.hypot(
+                pointer2.x - pointer1.x,
+                pointer2.y - pointer1.y
+            );
+        }
+
+
+        function getPointerCenter(
+            pointer1,
+            pointer2
+        ) {
+
+            return {
+                x:
+                    (
+                        pointer1.x +
+                        pointer2.x
+                    ) / 2,
+
+                y:
+                    (
+                        pointer1.y +
+                        pointer2.y
+                    ) / 2
+            };
+        }
+
+
+        /*
+        ------------------------------------------------
+        KEEP THE IMAGE INSIDE USEFUL BOUNDS
+        ------------------------------------------------
+        */
+
+        function clampViewerTranslation() {
+
+            const stageRect =
+                imageViewerStage
+                    .getBoundingClientRect();
+
+
+            const baseWidth =
+                imageViewerImage.clientWidth;
+
+
+            const baseHeight =
+                imageViewerImage.clientHeight;
+
+
+            if (
+                baseWidth === 0 ||
+                baseHeight === 0
+            ) {
+
+                return;
+            }
+
+
+            const scaledWidth =
+                baseWidth *
+                viewerScale;
+
+
+            const scaledHeight =
+                baseHeight *
+                viewerScale;
+
+
+            const maxTranslateX =
+                Math.max(
+                    0,
+                    (
+                        scaledWidth -
+                        stageRect.width
+                    ) / 2
+                );
+
+
+            const maxTranslateY =
+                Math.max(
+                    0,
+                    (
+                        scaledHeight -
+                        stageRect.height
+                    ) / 2
+                );
+
+
+            viewerTranslateX =
+                Math.max(
+                    -maxTranslateX,
+                    Math.min(
+                        maxTranslateX,
+                        viewerTranslateX
+                    )
+                );
+
+
+            viewerTranslateY =
+                Math.max(
+                    -maxTranslateY,
+                    Math.min(
+                        maxTranslateY,
+                        viewerTranslateY
+                    )
+                );
+        }
+
+
+        /*
+        ------------------------------------------------
+        APPLY IMAGE TRANSFORM
         ------------------------------------------------
         */
 
         function updateViewerTransform() {
+
+            clampViewerTranslation();
+
 
             imageViewerImage.style.transform =
                 "translate(" +
@@ -1310,7 +1608,7 @@
 
         /*
         ------------------------------------------------
-        NULSTIL ZOOM
+        RESET ZOOM
         ------------------------------------------------
         */
 
@@ -1322,9 +1620,9 @@
             viewerTranslateY = 0;
 
             previousPinchDistance = null;
+            previousPinchCenter = null;
 
-            previousPanX = null;
-            previousPanY = null;
+            previousPanPoint = null;
 
             activePointers.clear();
 
@@ -1334,16 +1632,11 @@
 
         /*
         ------------------------------------------------
-        ÅBN BANEOVERSIGT
+        OPEN COURSE OVERVIEW
         ------------------------------------------------
         */
 
         function openImageViewer() {
-
-            /*
-            Brug præcis det billede som vises
-            på det aktuelle hul.
-            */
 
             imageViewerImage.src =
                 holeMap.src;
@@ -1351,9 +1644,6 @@
 
             imageViewerImage.alt =
                 holeMap.alt;
-
-
-            resetImageViewer();
 
 
             imageViewer.classList.add(
@@ -1365,12 +1655,24 @@
                 "aria-hidden",
                 "false"
             );
+
+
+            /*
+            Wait one frame so the image has its
+            correct fullscreen dimensions.
+            */
+
+            requestAnimationFrame(
+                function () {
+                    resetImageViewer();
+                }
+            );
         }
 
 
         /*
         ------------------------------------------------
-        LUK BANEOVERSIGT
+        CLOSE COURSE OVERVIEW
         ------------------------------------------------
         */
 
@@ -1393,41 +1695,16 @@
 
         /*
         ------------------------------------------------
-        AFSTAND MELLEM TO FINGRE
-        ------------------------------------------------
-        */
-
-        function getPointerDistance(
-            pointer1,
-            pointer2
-        ) {
-
-            const deltaX =
-                pointer2.x -
-                pointer1.x;
-
-
-            const deltaY =
-                pointer2.y -
-                pointer1.y;
-
-
-            return Math.hypot(
-                deltaX,
-                deltaY
-            );
-        }
-
-
-        /*
-        ------------------------------------------------
-        FINGER NED
+        POINTER DOWN
         ------------------------------------------------
         */
 
         imageViewerStage.addEventListener(
             "pointerdown",
             function (event) {
+
+                event.preventDefault();
+
 
                 imageViewerStage.setPointerCapture(
                     event.pointerId
@@ -1443,27 +1720,16 @@
                 );
 
 
-                /*
-                Én finger:
-                start panorering.
-                */
-
                 if (
                     activePointers.size === 1
                 ) {
 
-                    previousPanX =
-                        event.clientX;
-
-                    previousPanY =
-                        event.clientY;
+                    previousPanPoint = {
+                        x: event.clientX,
+                        y: event.clientY
+                    };
                 }
 
-
-                /*
-                To fingre:
-                start pinch.
-                */
 
                 if (
                     activePointers.size === 2
@@ -1480,6 +1746,16 @@
                             pointers[0],
                             pointers[1]
                         );
+
+
+                    previousPinchCenter =
+                        getPointerCenter(
+                            pointers[0],
+                            pointers[1]
+                        );
+
+
+                    previousPanPoint = null;
                 }
             }
         );
@@ -1487,7 +1763,7 @@
 
         /*
         ------------------------------------------------
-        FINGER BEVÆGES
+        POINTER MOVE
         ------------------------------------------------
         */
 
@@ -1505,6 +1781,9 @@
                 }
 
 
+                event.preventDefault();
+
+
                 activePointers.set(
                     event.pointerId,
                     {
@@ -1515,8 +1794,8 @@
 
 
                 /*
-                TO FINGRE:
-                PINCH ZOOM
+                TWO FINGERS:
+                PINCH AROUND THE ACTUAL PINCH MIDPOINT.
                 */
 
                 if (
@@ -1536,38 +1815,129 @@
                         );
 
 
+                    const currentPinchCenter =
+                        getPointerCenter(
+                            pointers[0],
+                            pointers[1]
+                        );
+
+
                     if (
-                        previousPinchDistance !== null
+                        previousPinchDistance !== null &&
+                        previousPinchCenter !== null
                     ) {
 
-                        const scaleChange =
-                            currentDistance /
-                            previousPinchDistance;
+                        const oldScale =
+                            viewerScale;
 
 
-                        viewerScale *=
-                            scaleChange;
+                        let newScale =
+                            oldScale *
+                            (
+                                currentDistance /
+                                previousPinchDistance
+                            );
 
 
-                        viewerScale =
+                        newScale =
                             Math.min(
                                 viewerMaxScale,
                                 Math.max(
                                     viewerMinScale,
-                                    viewerScale
+                                    newScale
                                 )
                             );
 
 
+                        const stageRect =
+                            imageViewerStage
+                                .getBoundingClientRect();
+
+
+                        const stageCenterX =
+                            stageRect.left +
+                            stageRect.width / 2;
+
+
+                        const stageCenterY =
+                            stageRect.top +
+                            stageRect.height / 2;
+
+
                         /*
-                        Hvis vi zoomer helt ud,
-                        centreres billedet igen.
+                        Convert the PREVIOUS pinch midpoint to
+                        coordinates relative to the stage center.
                         */
 
+                        const previousCenterX =
+                            previousPinchCenter.x -
+                            stageCenterX;
+
+
+                        const previousCenterY =
+                            previousPinchCenter.y -
+                            stageCenterY;
+
+
+                        const currentCenterX =
+                            currentPinchCenter.x -
+                            stageCenterX;
+
+
+                        const currentCenterY =
+                            currentPinchCenter.y -
+                            stageCenterY;
+
+
+                        /*
+                        Find the exact point in the unscaled image
+                        that was under the fingers before this move.
+                        */
+
+                        const imagePointX =
+                            (
+                                previousCenterX -
+                                viewerTranslateX
+                            ) /
+                            oldScale;
+
+
+                        const imagePointY =
+                            (
+                                previousCenterY -
+                                viewerTranslateY
+                            ) /
+                            oldScale;
+
+
+                        /*
+                        Move the image so that the SAME image point
+                        stays underneath the CURRENT pinch midpoint.
+                        */
+
+                        viewerTranslateX =
+                            currentCenterX -
+                            newScale *
+                            imagePointX;
+
+
+                        viewerTranslateY =
+                            currentCenterY -
+                            newScale *
+                            imagePointY;
+
+
+                        viewerScale =
+                            newScale;
+
+
                         if (
-                            viewerScale ===
-                            viewerMinScale
+                            viewerScale <=
+                            viewerMinScale + 0.001
                         ) {
+
+                            viewerScale =
+                                viewerMinScale;
 
                             viewerTranslateX = 0;
                             viewerTranslateY = 0;
@@ -1582,13 +1952,17 @@
                         currentDistance;
 
 
+                    previousPinchCenter =
+                        currentPinchCenter;
+
+
                     return;
                 }
 
 
                 /*
-                ÉN FINGER:
-                PANORÉR HVIS DER ER ZOOMET IND
+                ONE FINGER:
+                PAN THE ZOOMED IMAGE.
                 */
 
                 if (
@@ -1596,39 +1970,32 @@
                     viewerScale > 1
                 ) {
 
+                    const currentPanPoint = {
+                        x: event.clientX,
+                        y: event.clientY
+                    };
+
+
                     if (
-                        previousPanX !== null &&
-                        previousPanY !== null
+                        previousPanPoint !== null
                     ) {
 
-                        const deltaX =
-                            event.clientX -
-                            previousPanX;
-
-
-                        const deltaY =
-                            event.clientY -
-                            previousPanY;
-
-
                         viewerTranslateX +=
-                            deltaX;
+                            currentPanPoint.x -
+                            previousPanPoint.x;
 
 
                         viewerTranslateY +=
-                            deltaY;
+                            currentPanPoint.y -
+                            previousPanPoint.y;
 
 
                         updateViewerTransform();
                     }
 
 
-                    previousPanX =
-                        event.clientX;
-
-
-                    previousPanY =
-                        event.clientY;
+                    previousPanPoint =
+                        currentPanPoint;
                 }
             }
         );
@@ -1636,7 +2003,7 @@
 
         /*
         ------------------------------------------------
-        FINGER SLIPPES
+        POINTER RELEASE
         ------------------------------------------------
         */
 
@@ -1649,15 +2016,9 @@
             );
 
 
-            previousPinchDistance =
-                null;
+            previousPinchDistance = null;
+            previousPinchCenter = null;
 
-
-            /*
-            Hvis én finger stadig er på
-            skærmen efter pinch, bruger vi
-            den som startpunkt for panorering.
-            */
 
             if (
                 activePointers.size === 1
@@ -1669,20 +2030,14 @@
                     )[0];
 
 
-                previousPanX =
-                    remainingPointer.x;
-
-
-                previousPanY =
-                    remainingPointer.y;
+                previousPanPoint = {
+                    x: remainingPointer.x,
+                    y: remainingPointer.y
+                };
 
             } else {
 
-                previousPanX =
-                    null;
-
-                previousPanY =
-                    null;
+                previousPanPoint = null;
             }
         }
 
@@ -1701,7 +2056,7 @@
 
         /*
         ------------------------------------------------
-        ÅBN / LUK
+        OPEN / CLOSE
         ------------------------------------------------
         */
 
@@ -1718,7 +2073,7 @@
 
 
         /*
-        Escape på computer
+        Escape on desktop
         */
 
         document.addEventListener(
@@ -1737,7 +2092,8 @@
             }
         );
 
-                /*
+
+/*
                 ================================================================
         EVENT LISTENERS
         ================================================================
