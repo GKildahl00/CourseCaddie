@@ -997,9 +997,7 @@
                 Start GPS
             </button>
 
-            <div id="status">
-                GPS is not started
-            </div>
+            <div id="status"></div>
 
             <div id="accuracy"></div>
 
@@ -1540,7 +1538,7 @@
         }
 
         function openCourse(courseKey) {
-            stopGPS("GPS is not started");
+            stopGPS("");
 
             currentCourseKey = courseKey;
             currentHoleIndex = 0;
@@ -1552,7 +1550,7 @@
         }
 
         function goHome() {
-            stopGPS("GPS is not started");
+            stopGPS("");
             currentCourseKey = null;
             currentHoleIndex = 0;
             showScreen("mainMenuScreen");
@@ -2392,7 +2390,7 @@
             maybeUpdateWind(position);
 
             document.getElementById("status").textContent =
-                "GPS active";
+                "";
 
             document.getElementById("accuracy").textContent =
                 "Estimated GPS accuracy: ±" +
@@ -2453,7 +2451,7 @@
             button.setAttribute("aria-pressed", "true");
         }
 
-        function stopGPS(statusText = "GPS stopped") {
+        function stopGPS(statusText = "") {
 
             /*
             Invalidate any pending weather/compass work.
