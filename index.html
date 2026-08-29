@@ -731,7 +731,7 @@
         .wind-plays-like-value {
             margin-top: 2px;
 
-            font-size: 23px;
+            font-size: 26px;
             font-weight: 700;
             color: #147a36;
         }
@@ -746,17 +746,7 @@
         }
 
         .wind-status {
-            margin-top: 2px;
-
-            overflow: hidden;
-
-            font-size: 10px;
-            line-height: 1.15;
-
-            color: #888;
-
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            display: none;
         }
 
         /* ------------------------------------------------
@@ -1945,6 +1935,11 @@
         90°  = pure crosswind
         180° = direct tailwind
 
+        The on-screen arrow is displayed as the direction
+        the wind is BLOWING TOWARD, so:
+        - arrow toward the player = headwind
+        - arrow away from the player = tailwind
+
         Practical rule used here:
         - headwind: +2 meters per 1 m/s effective headwind
         - tailwind: -1 meter per 1 m/s effective tailwind
@@ -2065,6 +2060,19 @@
                     phoneHeading
                 );
 
+            /*
+            Show the arrow as the direction the wind is
+            blowing TOWARD the shot, not the direction it
+            comes FROM. That makes the visual behavior more
+            intuitive:
+            - arrow toward the player = headwind
+            - arrow away from the player = tailwind
+            */
+            const relativeWindTo =
+                normalizeDegrees(
+                    relativeWindFrom + 180
+                );
+
 
             /*
             Keep rotation continuous around 0/360 so the
@@ -2076,20 +2084,20 @@
             ) {
 
                 continuousArrowRotation =
-                    relativeWindFrom;
+                    relativeWindTo;
 
             } else {
 
                 continuousArrowRotation +=
                     shortestAngleDelta(
                         lastRelativeWind,
-                        relativeWindFrom
+                        relativeWindTo
                     );
             }
 
 
             lastRelativeWind =
-                relativeWindFrom;
+                relativeWindTo;
 
 
             windArrowRotator.style.transform =
