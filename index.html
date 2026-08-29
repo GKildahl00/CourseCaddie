@@ -1675,6 +1675,14 @@
         let compassAccuracy = null;
         let compassListening = false;
 
+        /*
+        Continuous compass-ring rotation prevents the
+        N/E/S/W ring from jumping when the heading crosses
+        between 359° and 0°.
+        */
+        let lastCompassHeading = null;
+        let continuousCompassRotation = 0;
+
         let lastRelativeWind = null;
         let continuousArrowRotation = 0;
 
@@ -1934,14 +1942,43 @@
 
 
             /*
-            Rotate the compass ring so N/E/S/W remain
-            correct relative to the real world while the
-            top of the screen remains the phone's forward
-            direction.
+            Rotate the compass ring continuously.
+
+            A compass heading wraps from 359° back to 0°.
+            Rotating directly with -phoneHeading can make CSS
+            animate almost a complete revolution at that point.
+
+            shortestAngleDelta() makes the ring always take the
+            shortest physical path instead.
             */
+            if (
+                lastCompassHeading === null
+            ) {
+
+                continuousCompassRotation =
+                    -phoneHeading;
+
+            } else {
+
+                const compassDelta =
+                    shortestAngleDelta(
+                        lastCompassHeading,
+                        phoneHeading
+                    );
+
+
+                continuousCompassRotation -=
+                    compassDelta;
+            }
+
+
+            lastCompassHeading =
+                phoneHeading;
+
+
             windCardinalRing.style.transform =
                 "rotate(" +
-                (-phoneHeading) +
+                continuousCompassRotation +
                 "deg)";
 
 
@@ -2077,6 +2114,9 @@
             smoothedPhoneHeading = null;
 
             compassAccuracy = null;
+
+            lastCompassHeading = null;
+            continuousCompassRotation = 0;
 
             lastRelativeWind = null;
             continuousArrowRotation = 0;
@@ -2299,6 +2339,9 @@
 
             lastRelativeWind = null;
             continuousArrowRotation = 0;
+
+            lastCompassHeading = null;
+            continuousCompassRotation = 0;
 
             windSpeedElement.textContent =
                 "--";
