@@ -149,6 +149,79 @@
             margin-bottom: 35px;
         }
 
+        .course-search {
+            position: relative;
+            margin-bottom: 18px;
+        }
+
+        .course-search-input {
+            width: 100%;
+            min-height: 48px;
+
+            padding: 12px 44px 12px 16px;
+
+            border: 1px solid #dedede;
+            border-radius: 14px;
+
+            background-color: white;
+
+            color: #222;
+
+            font-family: inherit;
+            font-size: 16px;
+
+            outline: none;
+
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .course-search-input::placeholder {
+            color: #8a8a8f;
+        }
+
+        .course-search-input:focus {
+            border-color: #147a36;
+        }
+
+        .course-search-icon {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+
+            width: 19px;
+            height: 19px;
+
+            transform: translateY(-50%);
+
+            color: #777;
+
+            pointer-events: none;
+        }
+
+        .course-search-icon svg {
+            width: 100%;
+            height: 100%;
+
+            display: block;
+
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .course-no-results {
+            display: none;
+
+            padding: 18px 10px;
+
+            font-size: 15px;
+
+            color: #777;
+        }
+
         .course-list {
             display: flex;
             flex-direction: column;
@@ -932,6 +1005,35 @@
                 <h1>Welcome to CourseCaddie</h1>
                 <div class="main-menu-subtitle">Select course</div>
 
+                <div class="course-search">
+                    <input
+                        id="courseSearchInput"
+                        class="course-search-input"
+                        type="search"
+                        placeholder="Search courses..."
+                        aria-label="Search courses"
+                        autocomplete="off"
+                        autocapitalize="off"
+                        spellcheck="false"
+                    >
+
+                    <div
+                        class="course-search-icon"
+                        aria-hidden="true"
+                    >
+                        <svg viewBox="0 0 24 24">
+                            <circle
+                                cx="11"
+                                cy="11"
+                                r="7"
+                            />
+                            <path
+                                d="M16.5 16.5 21 21"
+                            />
+                        </svg>
+                    </div>
+                </div>
+
                 <div class="course-list">
                     <button id="segaCourseButton" class="course-button" type="button">
                         <span class="course-name">Lyngbygaard SEGA 9-hole course</span>
@@ -960,6 +1062,13 @@
                             </ul>
                         </span>
                     </button>
+                </div>
+
+                <div
+                    id="courseNoResults"
+                    class="course-no-results"
+                >
+                    No courses found
                 </div>
             </div>
         </div>
@@ -1199,7 +1308,7 @@
                         );
 
                     },
-                    1050
+                    2050
                 );
             }
         );
@@ -1553,6 +1662,10 @@
             stopGPS("");
             currentCourseKey = null;
             currentHoleIndex = 0;
+
+            courseSearchInput.value = "";
+            filterCourses();
+
             showScreen("mainMenuScreen");
         }
 
@@ -3224,6 +3337,93 @@
                     closeImageViewer();
                 }
             }
+        );
+
+
+        /*
+        ================================================================
+        COURSE SEARCH
+        ================================================================
+        */
+
+        const courseSearchInput =
+            document.getElementById(
+                "courseSearchInput"
+            );
+
+
+        const courseNoResults =
+            document.getElementById(
+                "courseNoResults"
+            );
+
+
+        function filterCourses() {
+
+            const searchText =
+                courseSearchInput.value
+                    .trim()
+                    .toLowerCase();
+
+
+            const courseButtons =
+                document.querySelectorAll(
+                    ".course-button"
+                );
+
+
+            let visibleCourses = 0;
+
+
+            courseButtons.forEach(
+                function (button) {
+
+                    const courseName =
+                        button.querySelector(
+                            ".course-name"
+                        );
+
+
+                    const courseText =
+                        courseName
+                            ? courseName.textContent
+                                .toLowerCase()
+                            : "";
+
+
+                    const isMatch =
+                        searchText === "" ||
+                        courseText.includes(
+                            searchText
+                        );
+
+
+                    button.style.display =
+                        isMatch
+                            ? ""
+                            : "none";
+
+
+                    if (
+                        isMatch
+                    ) {
+
+                        visibleCourses++;
+                    }
+                }
+            );
+
+
+            courseNoResults.style.display =
+                visibleCourses === 0
+                    ? "block"
+                    : "none";
+        }
+
+
+        courseSearchInput.addEventListener(
+            "input",
+            filterCourses
         );
 
 
