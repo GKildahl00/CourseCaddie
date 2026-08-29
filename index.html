@@ -94,8 +94,8 @@
         }
 
         .splash-logo {
-            width: clamp(280px, 42vw, 310px);
-            height: clamp(280px, 42vw, 310px);
+            width: clamp(240px, 42vw, 250px);
+            height: clamp(240px, 42vw, 250px);
 
             object-fit: cover;
             border-radius: 28px;
@@ -104,7 +104,7 @@
         .splash-title {
             margin-top: 18px;
 
-            font-size: clamp(56px, 8vw, 66px);
+            font-size: clamp(50px, 8vw, 56px);
             font-weight: 700;
             letter-spacing: -0.8px;
 
@@ -262,9 +262,9 @@
         .hole-navigation {
             position: relative;
             display: grid;
-            min-height: 36px;
+            min-height: 58px;
             align-items: center;
-            margin-bottom: clamp(10px, 2.4vh, 28px);
+            margin-bottom: clamp(8px, 1.8vh, 20px);
             flex: 0 0 auto;
         }
 
@@ -277,10 +277,10 @@
         .hole-nav-button {
             position: absolute;
 
-            top: 58%;
+            top: 50%;
 
-            width: 44px;
-            height: 44px;
+            width: 58px;
+            height: 58px;
 
             padding: 0;
 
@@ -291,7 +291,7 @@
 
             color: #147a36;
 
-            font-size: 22px;
+            font-size: 24px;
             line-height: 1;
 
             display: flex;
@@ -302,15 +302,20 @@
 
             transform: translateY(-50%);
 
+            z-index: 10;
+
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
 
         #prevHoleButton {
-            left: clamp(58px, 18vw, 92px);
+            left: clamp(50px, 16vw, 84px);
         }
 
         #nextHoleButton {
-            right: clamp(58px, 18vw, 92px);
+            right: clamp(50px, 16vw, 84px);
         }
 
         .hole-nav-button:disabled {
@@ -318,7 +323,6 @@
         }
 
         .hole-nav-button:active {
-            transform: translateY(-50%) scale(0.94);
             background-color: #f0f0f0;
         }
 
