@@ -94,8 +94,8 @@
         }
 
         .splash-logo {
-            width: clamp(240px, 42vw, 250px);
-            height: clamp(240px, 42vw, 250px);
+            width: clamp(280px, 42vw, 310px);
+            height: clamp(280px, 42vw, 310px);
 
             object-fit: cover;
             border-radius: 28px;
@@ -104,7 +104,7 @@
         .splash-title {
             margin-top: 18px;
 
-            font-size: clamp(50px, 8vw, 56px);
+            font-size: clamp(56px, 8vw, 66px);
             font-weight: 700;
             letter-spacing: -0.8px;
 
@@ -147,6 +147,79 @@
             font-size: 17px;
             color: #666;
             margin-bottom: 35px;
+        }
+
+        .course-search {
+            position: relative;
+            margin-bottom: 18px;
+        }
+
+        .course-search-input {
+            width: 100%;
+            min-height: 48px;
+
+            padding: 12px 44px 12px 16px;
+
+            border: 1px solid #dedede;
+            border-radius: 14px;
+
+            background-color: white;
+
+            color: #222;
+
+            font-family: inherit;
+            font-size: 16px;
+
+            outline: none;
+
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .course-search-input::placeholder {
+            color: #8a8a8f;
+        }
+
+        .course-search-input:focus {
+            border-color: #147a36;
+        }
+
+        .course-search-icon {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+
+            width: 19px;
+            height: 19px;
+
+            transform: translateY(-50%);
+
+            color: #777;
+
+            pointer-events: none;
+        }
+
+        .course-search-icon svg {
+            width: 100%;
+            height: 100%;
+
+            display: block;
+
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .course-no-results {
+            display: none;
+
+            padding: 18px 10px;
+
+            font-size: 15px;
+
+            color: #777;
         }
 
         .course-list {
@@ -364,10 +437,283 @@
 
         #accuracy {
             margin-top: 2px;
-            margin-bottom: clamp(5px, 1vh, 12px);
+            margin-bottom: clamp(5px, 1vh, 9px);
             font-size: 13px;
             flex: 0 0 auto;
             color: #777;
+        }
+
+        /*
+        ------------------------------------------------
+        WIND
+        ------------------------------------------------
+        */
+
+        .wind-widget {
+            width: 100%;
+
+            margin-bottom: clamp(5px, 0.9vh, 9px);
+            padding: 8px 12px;
+
+            display: grid;
+            grid-template-columns: 82px minmax(0, 1fr);
+            gap: 13px;
+            align-items: center;
+
+            flex: 0 0 auto;
+
+            border: 1px solid #e2e2e4;
+            border-radius: 14px;
+
+            background-color: white;
+
+            text-align: left;
+        }
+
+        /*
+        Compass / wind dial
+        */
+
+        .wind-dial {
+            position: relative;
+
+            width: 78px;
+            height: 78px;
+
+            border: 1.5px solid #c8c8cc;
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle at center,
+                    #ffffff 0%,
+                    #fafafa 65%,
+                    #f1f1f3 100%
+                );
+        }
+
+        /*
+        Subtle inner compass ring
+        */
+        .wind-dial::after {
+            content: "";
+
+            position: absolute;
+            inset: 9px;
+
+            border: 1px solid #e1e1e4;
+            border-radius: 50%;
+
+            pointer-events: none;
+        }
+
+        /*
+        Small green marker at the top.
+        This indicates the direction the phone is pointing.
+        */
+        .wind-phone-marker {
+            position: absolute;
+
+            top: -4px;
+            left: 50%;
+
+            width: 0;
+            height: 0;
+
+            z-index: 4;
+
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 8px solid #147a36;
+
+            transform: translateX(-50%);
+        }
+
+        /*
+        N / E / S / W compass ring.
+        It rotates opposite the phone heading so the
+        letters represent real-world compass directions.
+        */
+        .wind-cardinal-ring {
+            position: absolute;
+            inset: 0;
+
+            z-index: 3;
+
+            transform: rotate(0deg);
+            transform-origin: center center;
+
+            /*
+            No CSS transition here.
+            The compass heading is already smoothed in JavaScript.
+            Removing the transition prevents iOS Safari from briefly
+            animating the long way around when crossing 0° / 360°.
+            */
+            transition: none;
+
+            pointer-events: none;
+        }
+
+        /*
+        N / E / S / W labels
+        */
+        .wind-cardinal {
+            position: absolute;
+
+            z-index: 3;
+
+            font-size: 9px;
+            font-weight: 700;
+            line-height: 1;
+
+            color: #7a7a80;
+
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .wind-cardinal.n {
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .wind-cardinal.e {
+            top: 50%;
+            right: 5px;
+            transform: translateY(-50%);
+        }
+
+        .wind-cardinal.s {
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .wind-cardinal.w {
+            top: 50%;
+            left: 5px;
+            transform: translateY(-50%);
+        }
+
+        /*
+        Rotating wind arrow
+        */
+        .wind-arrow-rotator {
+            position: absolute;
+            inset: 0;
+
+            z-index: 2;
+
+            transform: rotate(0deg);
+            transform-origin: center center;
+
+            transition: transform 0.08s linear;
+        }
+
+        .wind-arrow-rotator svg {
+            width: 100%;
+            height: 100%;
+
+            display: block;
+        }
+
+        .wind-arrow-shaft {
+            stroke: #147a36;
+            stroke-width: 4;
+            stroke-linecap: round;
+        }
+
+        .wind-arrow-head {
+            fill: #147a36;
+        }
+
+        .wind-center-dot {
+            position: absolute;
+
+            left: 50%;
+            top: 50%;
+
+            z-index: 5;
+
+            width: 9px;
+            height: 9px;
+
+            border: 2px solid white;
+            border-radius: 50%;
+
+            background-color: #147a36;
+
+            transform: translate(-50%, -50%);
+        }
+
+        /*
+        Text readout
+        */
+
+        .wind-readout {
+            min-width: 0;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .wind-label {
+            margin-bottom: 2px;
+
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+
+            color: #777;
+        }
+
+        .wind-speed-line {
+            display: flex;
+            align-items: baseline;
+            gap: 5px;
+
+            white-space: nowrap;
+        }
+
+        .wind-speed {
+            font-size: clamp(26px, 7.2vw, 32px);
+            font-weight: 700;
+            line-height: 1;
+
+            color: #1c1c1e;
+        }
+
+        .wind-unit {
+            font-size: 13px;
+            font-weight: 500;
+
+            color: #666;
+        }
+
+        .wind-from {
+            margin-top: 4px;
+
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+
+            color: #333;
+        }
+
+        .wind-status {
+            margin-top: 2px;
+
+            overflow: hidden;
+
+            font-size: 10px;
+            line-height: 1.15;
+
+            color: #888;
+
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         /* ------------------------------------------------
@@ -659,6 +1005,35 @@
                 <h1>Welcome to CourseCaddie</h1>
                 <div class="main-menu-subtitle">Select course</div>
 
+                <div class="course-search">
+                    <input
+                        id="courseSearchInput"
+                        class="course-search-input"
+                        type="search"
+                        placeholder="Search courses..."
+                        aria-label="Search courses"
+                        autocomplete="off"
+                        autocapitalize="off"
+                        spellcheck="false"
+                    >
+
+                    <div
+                        class="course-search-icon"
+                        aria-hidden="true"
+                    >
+                        <svg viewBox="0 0 24 24">
+                            <circle
+                                cx="11"
+                                cy="11"
+                                r="7"
+                            />
+                            <path
+                                d="M16.5 16.5 21 21"
+                            />
+                        </svg>
+                    </div>
+                </div>
+
                 <div class="course-list">
                     <button id="segaCourseButton" class="course-button" type="button">
                         <span class="course-name">Lyngbygaard SEGA 9-hole course</span>
@@ -687,6 +1062,13 @@
                             </ul>
                         </span>
                     </button>
+                </div>
+
+                <div
+                    id="courseNoResults"
+                    class="course-no-results"
+                >
+                    No courses found
                 </div>
             </div>
         </div>
@@ -724,11 +1106,92 @@
                 Start GPS
             </button>
 
-            <div id="status">
-                GPS is not started
-            </div>
+            <div id="status"></div>
 
             <div id="accuracy"></div>
+
+            <div
+                id="windWidget"
+                class="wind-widget"
+                aria-live="polite"
+            >
+                <div
+                    class="wind-dial"
+                    aria-hidden="true"
+                >
+                    <div class="wind-phone-marker"></div>
+
+                    <div
+                        id="windCardinalRing"
+                        class="wind-cardinal-ring"
+                    >
+                        <span class="wind-cardinal n">N</span>
+                        <span class="wind-cardinal e">E</span>
+                        <span class="wind-cardinal s">S</span>
+                        <span class="wind-cardinal w">W</span>
+                    </div>
+
+                    <div
+                        id="windArrowRotator"
+                        class="wind-arrow-rotator"
+                    >
+                        <svg viewBox="0 0 78 78">
+                            <line
+                                class="wind-arrow-shaft"
+                                x1="39"
+                                y1="49"
+                                x2="39"
+                                y2="22"
+                            />
+
+                            <path
+                                class="wind-arrow-head"
+                                d="M39 16 L30 28 L48 28 Z"
+                            />
+                        </svg>
+                    </div>
+
+                    <div class="wind-center-dot"></div>
+                </div>
+
+
+                <div class="wind-readout">
+
+                    <div class="wind-label">
+                        WIND
+                    </div>
+
+                    <div class="wind-speed-line">
+
+                        <span
+                            id="windSpeed"
+                            class="wind-speed"
+                        >
+                            --
+                        </span>
+
+                        <span class="wind-unit">
+                            m/s
+                        </span>
+
+                    </div>
+
+                    <div
+                        id="windFrom"
+                        class="wind-from"
+                    >
+                        FROM --°
+                    </div>
+
+                    <div
+                        id="windStatus"
+                        class="wind-status"
+                    >
+                        Start GPS for wind
+                    </div>
+
+                </div>
+            </div>
 
             <div class="hole-layout">
                 <div class="distance-column">
@@ -845,7 +1308,7 @@
                         );
 
                     },
-                    1050
+                    2050
                 );
             }
         );
@@ -1184,7 +1647,7 @@
         }
 
         function openCourse(courseKey) {
-            stopGPS("GPS is not started");
+            stopGPS("");
 
             currentCourseKey = courseKey;
             currentHoleIndex = 0;
@@ -1196,9 +1659,13 @@
         }
 
         function goHome() {
-            stopGPS("GPS is not started");
+            stopGPS("");
             currentCourseKey = null;
             currentHoleIndex = 0;
+
+            courseSearchInput.value = "";
+            filterCourses();
+
             showScreen("mainMenuScreen");
         }
 
@@ -1273,6 +1740,746 @@
 
         /*
         ================================================================
+        WIND + COMPASS
+        ================================================================
+
+        Wind data comes from Open-Meteo at the current GPS position.
+        The weather API reports the direction the wind COMES FROM.
+
+        Relative direction:
+        0°   = wind comes from straight ahead
+        90°  = wind comes from the right
+        180° = wind comes from behind
+        270° = wind comes from the left
+        */
+
+        const windSpeedElement =
+            document.getElementById(
+                "windSpeed"
+            );
+
+
+        const windFromElement =
+            document.getElementById(
+                "windFrom"
+            );
+
+
+        const windStatusElement =
+            document.getElementById(
+                "windStatus"
+            );
+
+
+        const windArrowRotator =
+            document.getElementById(
+                "windArrowRotator"
+            );
+
+
+        const windCardinalRing =
+            document.getElementById(
+                "windCardinalRing"
+            );
+
+
+        let windSpeedMs = null;
+        let windDirectionFrom = null;
+
+        let phoneHeading = null;
+        let smoothedPhoneHeading = null;
+
+        let compassAccuracy = null;
+        let compassListening = false;
+
+        /*
+        Keep the compass-ring angle unwrapped.
+        Example:
+        358° -> 359° -> 0° -> 1°
+        becomes one continuous rotation instead of a 359° jump.
+        */
+        let lastCompassHeading = null;
+        let continuousCompassRotation = 0;
+
+        let lastRelativeWind = null;
+        let continuousArrowRotation = 0;
+
+        let lastWindFetchTime = 0;
+        let windFetchInProgress = false;
+
+        let windSessionId = 0;
+
+        const WIND_UPDATE_INTERVAL_MS =
+            2 * 60 * 1000;
+
+
+        /*
+        ------------------------------------------------
+        ANGLE HELPERS
+        ------------------------------------------------
+        */
+
+        function normalizeDegrees(degrees) {
+
+            return (
+                (degrees % 360) +
+                360
+            ) % 360;
+        }
+
+
+        function shortestAngleDelta(
+            fromDegrees,
+            toDegrees
+        ) {
+
+            return (
+                (
+                    toDegrees -
+                    fromDegrees +
+                    540
+                ) %
+                360
+            ) - 180;
+        }
+
+
+        /*
+        ------------------------------------------------
+        UPDATE WIND UI
+        ------------------------------------------------
+        */
+
+        function updateWindDisplay() {
+
+            if (
+                windSpeedMs === null ||
+                windDirectionFrom === null
+            ) {
+
+                windSpeedElement.textContent =
+                    "--";
+
+                windFromElement.textContent =
+                    "FROM --°";
+
+                windArrowRotator.style.transform =
+                    "rotate(0deg)";
+
+                return;
+            }
+
+
+            windSpeedElement.textContent =
+                windSpeedMs.toFixed(1);
+
+
+            /*
+            Weather data is available, but the compass
+            has not produced a usable heading yet.
+            */
+
+            if (
+                phoneHeading === null
+            ) {
+
+                windFromElement.textContent =
+                    "FROM --°";
+
+                windArrowRotator.style.transform =
+                    "rotate(0deg)";
+
+                return;
+            }
+
+
+            const relativeWindFrom =
+                normalizeDegrees(
+                    windDirectionFrom -
+                    phoneHeading
+                );
+
+
+            /*
+            Keep rotation continuous around 0/360 so the
+            arrow does not make a full turn when crossing north.
+            */
+
+            if (
+                lastRelativeWind === null
+            ) {
+
+                continuousArrowRotation =
+                    relativeWindFrom;
+
+            } else {
+
+                continuousArrowRotation +=
+                    shortestAngleDelta(
+                        lastRelativeWind,
+                        relativeWindFrom
+                    );
+            }
+
+
+            lastRelativeWind =
+                relativeWindFrom;
+
+
+            windArrowRotator.style.transform =
+                "rotate(" +
+                continuousArrowRotation +
+                "deg)";
+
+
+            windFromElement.textContent =
+                "FROM " +
+                String(
+                    Math.round(
+                        relativeWindFrom
+                    )
+                ).padStart(
+                    3,
+                    "0"
+                ) +
+                "°";
+
+
+            if (
+                compassAccuracy !== null &&
+                compassAccuracy >= 0 &&
+                compassAccuracy > 25
+            ) {
+
+                windStatusElement.textContent =
+                    "Compass accuracy ±" +
+                    Math.round(
+                        compassAccuracy
+                    ) +
+                    "°";
+
+            } else {
+
+                windStatusElement.textContent =
+                    "Relative to phone direction";
+            }
+        }
+
+
+        /*
+        ------------------------------------------------
+        COMPASS
+        ------------------------------------------------
+        */
+
+        function deviceOrientationUpdated(
+            event
+        ) {
+
+            let newHeading = null;
+
+
+            /*
+            iPhone / Safari:
+            webkitCompassHeading gives a real compass heading.
+            */
+
+            if (
+                typeof event.webkitCompassHeading ===
+                    "number" &&
+                event.webkitCompassHeading >= 0
+            ) {
+
+                newHeading =
+                    event.webkitCompassHeading;
+
+
+                if (
+                    typeof event.webkitCompassAccuracy ===
+                        "number"
+                ) {
+
+                    compassAccuracy =
+                        event.webkitCompassAccuracy;
+                }
+
+            } else if (
+                event.absolute === true &&
+                typeof event.alpha === "number"
+            ) {
+
+                /*
+                Fallback for browsers that provide an
+                absolute alpha angle.
+                */
+
+                newHeading =
+                    normalizeDegrees(
+                        360 -
+                        event.alpha
+                    );
+            }
+
+
+            if (
+                newHeading === null
+            ) {
+
+                return;
+            }
+
+
+            /*
+            Light circular smoothing to make the arrow
+            calmer without making it feel sluggish.
+            */
+
+            if (
+                smoothedPhoneHeading === null
+            ) {
+
+                smoothedPhoneHeading =
+                    newHeading;
+
+            } else {
+
+                smoothedPhoneHeading =
+                    normalizeDegrees(
+                        smoothedPhoneHeading +
+                        shortestAngleDelta(
+                            smoothedPhoneHeading,
+                            newHeading
+                        ) *
+                        0.22
+                    );
+            }
+
+
+            phoneHeading =
+                smoothedPhoneHeading;
+
+
+            /*
+            Rotate N/E/S/W using an unwrapped angle.
+
+            This is important on iPhone:
+            a heading can change from 359° to 0° even though
+            the phone only moved by 1°. We therefore calculate
+            the shortest angular change and add it to a
+            continuous rotation value.
+            */
+            if (
+                lastCompassHeading === null
+            ) {
+
+                continuousCompassRotation =
+                    -phoneHeading;
+
+            } else {
+
+                const compassDelta =
+                    shortestAngleDelta(
+                        lastCompassHeading,
+                        phoneHeading
+                    );
+
+
+                continuousCompassRotation -=
+                    compassDelta;
+            }
+
+
+            lastCompassHeading =
+                phoneHeading;
+
+
+            windCardinalRing.style.transform =
+                "rotate(" +
+                continuousCompassRotation +
+                "deg)";
+
+
+            updateWindDisplay();
+        }
+
+
+        async function startCompass(
+            sessionId
+        ) {
+
+            windStatusElement.textContent =
+                "Starting compass...";
+
+
+            if (
+                typeof DeviceOrientationEvent ===
+                "undefined"
+            ) {
+
+                windStatusElement.textContent =
+                    "Compass not supported";
+
+                return;
+            }
+
+
+            try {
+
+                /*
+                iPhone may require permission. Because this
+                function is called directly by the Start GPS
+                button, the system prompt can appear from the
+                same user action.
+                */
+
+                if (
+                    typeof DeviceOrientationEvent
+                        .requestPermission ===
+                    "function"
+                ) {
+
+                    const permission =
+                        await DeviceOrientationEvent
+                            .requestPermission();
+
+
+                    if (
+                        sessionId !==
+                        windSessionId
+                    ) {
+
+                        return;
+                    }
+
+
+                    if (
+                        permission !==
+                        "granted"
+                    ) {
+
+                        windStatusElement.textContent =
+                            "Compass permission denied";
+
+                        return;
+                    }
+                }
+
+
+                if (
+                    sessionId !==
+                    windSessionId
+                ) {
+
+                    return;
+                }
+
+
+                if (
+                    !compassListening
+                ) {
+
+                    window.addEventListener(
+                        "deviceorientation",
+                        deviceOrientationUpdated,
+                        true
+                    );
+
+                    compassListening = true;
+                }
+
+
+                windStatusElement.textContent =
+                    "Move phone to read compass";
+
+            } catch (error) {
+
+                console.error(
+                    "Compass error:",
+                    error
+                );
+
+
+                if (
+                    sessionId ===
+                    windSessionId
+                ) {
+
+                    windStatusElement.textContent =
+                        "Compass unavailable";
+                }
+            }
+        }
+
+
+        function stopCompass() {
+
+            if (
+                compassListening
+            ) {
+
+                window.removeEventListener(
+                    "deviceorientation",
+                    deviceOrientationUpdated,
+                    true
+                );
+
+                compassListening = false;
+            }
+
+
+            phoneHeading = null;
+            smoothedPhoneHeading = null;
+
+            compassAccuracy = null;
+
+            lastCompassHeading = null;
+            continuousCompassRotation = 0;
+
+            lastRelativeWind = null;
+            continuousArrowRotation = 0;
+        }
+
+
+        /*
+        ------------------------------------------------
+        WEATHER DATA
+        ------------------------------------------------
+        */
+
+        async function updateWindFromWeather(
+            position,
+            sessionId
+        ) {
+
+            if (
+                windFetchInProgress
+            ) {
+
+                return;
+            }
+
+
+            const now =
+                Date.now();
+
+
+            if (
+                lastWindFetchTime !== 0 &&
+                now -
+                lastWindFetchTime <
+                WIND_UPDATE_INTERVAL_MS
+            ) {
+
+                return;
+            }
+
+
+            windFetchInProgress = true;
+
+            windStatusElement.textContent =
+                "Loading wind...";
+
+
+            try {
+
+                const latitude =
+                    position.coords.latitude;
+
+
+                const longitude =
+                    position.coords.longitude;
+
+
+                const url =
+                    new URL(
+                        "https://api.open-meteo.com/v1/forecast"
+                    );
+
+
+                url.searchParams.set(
+                    "latitude",
+                    latitude.toFixed(6)
+                );
+
+
+                url.searchParams.set(
+                    "longitude",
+                    longitude.toFixed(6)
+                );
+
+
+                url.searchParams.set(
+                    "current",
+                    "wind_speed_10m,wind_direction_10m"
+                );
+
+
+                url.searchParams.set(
+                    "wind_speed_unit",
+                    "ms"
+                );
+
+
+                url.searchParams.set(
+                    "timezone",
+                    "auto"
+                );
+
+
+                const response =
+                    await fetch(
+                        url.toString(),
+                        {
+                            cache: "no-store"
+                        }
+                    );
+
+
+                if (
+                    !response.ok
+                ) {
+
+                    throw new Error(
+                        "Weather request failed"
+                    );
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    sessionId !==
+                    windSessionId ||
+                    watchId === null
+                ) {
+
+                    return;
+                }
+
+
+                if (
+                    !data.current ||
+                    typeof data.current
+                        .wind_speed_10m !==
+                        "number" ||
+                    typeof data.current
+                        .wind_direction_10m !==
+                        "number"
+                ) {
+
+                    throw new Error(
+                        "Invalid wind data"
+                    );
+                }
+
+
+                windSpeedMs =
+                    data.current
+                        .wind_speed_10m;
+
+
+                windDirectionFrom =
+                    normalizeDegrees(
+                        data.current
+                            .wind_direction_10m
+                    );
+
+
+                lastWindFetchTime =
+                    Date.now();
+
+
+                updateWindDisplay();
+
+
+                if (
+                    phoneHeading === null
+                ) {
+
+                    windStatusElement.textContent =
+                        "Move phone to read compass";
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Wind data error:",
+                    error
+                );
+
+
+                if (
+                    sessionId ===
+                    windSessionId &&
+                    watchId !== null
+                ) {
+
+                    windStatusElement.textContent =
+                        "Wind data unavailable";
+                }
+
+            } finally {
+
+                windFetchInProgress = false;
+            }
+        }
+
+
+        function maybeUpdateWind(
+            position
+        ) {
+
+            if (
+                watchId === null
+            ) {
+
+                return;
+            }
+
+
+            updateWindFromWeather(
+                position,
+                windSessionId
+            );
+        }
+
+
+        function resetWindDisplay() {
+
+            windSpeedMs = null;
+            windDirectionFrom = null;
+
+            lastWindFetchTime = 0;
+            windFetchInProgress = false;
+
+            lastRelativeWind = null;
+            continuousArrowRotation = 0;
+
+            lastCompassHeading = null;
+            continuousCompassRotation = 0;
+
+            windSpeedElement.textContent =
+                "--";
+
+            windFromElement.textContent =
+                "FROM --°";
+
+            windStatusElement.textContent =
+                "Start GPS for wind";
+
+            windArrowRotator.style.transform =
+                "rotate(0deg)";
+
+
+            windCardinalRing.style.transform =
+                "rotate(0deg)";
+        }
+
+
+        /*
+        ================================================================
         GPS
         ================================================================
         */
@@ -1288,8 +2495,15 @@
 
             updateDistances(position);
 
+            /*
+            Wind data follows the GPS position.
+            The request is internally limited to once every
+            2 minutes while GPS is active.
+            */
+            maybeUpdateWind(position);
+
             document.getElementById("status").textContent =
-                "GPS active";
+                "";
 
             document.getElementById("accuracy").textContent =
                 "Estimated GPS accuracy: ±" +
@@ -1316,6 +2530,12 @@
             document.getElementById("status").textContent =
                 "Finding GPS position...";
 
+            /*
+            Create a new wind/compass session.
+            */
+            windSessionId++;
+
+
             watchId = navigator.geolocation.watchPosition(
                 positionUpdated,
                 positionError,
@@ -1326,6 +2546,17 @@
                 }
             );
 
+
+            /*
+            Start compass from the same button press.
+            On iPhone this may show the motion/orientation
+            permission dialog the first time.
+            */
+            startCompass(
+                windSessionId
+            );
+
+
             const button = document.getElementById("startButton");
 
             button.textContent = "Stop GPS";
@@ -1333,11 +2564,23 @@
             button.setAttribute("aria-pressed", "true");
         }
 
-        function stopGPS(statusText = "GPS stopped") {
+        function stopGPS(statusText = "") {
+
+            /*
+            Invalidate any pending weather/compass work.
+            */
+            windSessionId++;
+
+
             if (watchId !== null) {
                 navigator.geolocation.clearWatch(watchId);
                 watchId = null;
             }
+
+
+            stopCompass();
+            resetWindDisplay();
+
 
             latestPosition = null;
 
@@ -2094,6 +3337,93 @@
                     closeImageViewer();
                 }
             }
+        );
+
+
+        /*
+        ================================================================
+        COURSE SEARCH
+        ================================================================
+        */
+
+        const courseSearchInput =
+            document.getElementById(
+                "courseSearchInput"
+            );
+
+
+        const courseNoResults =
+            document.getElementById(
+                "courseNoResults"
+            );
+
+
+        function filterCourses() {
+
+            const searchText =
+                courseSearchInput.value
+                    .trim()
+                    .toLowerCase();
+
+
+            const courseButtons =
+                document.querySelectorAll(
+                    ".course-button"
+                );
+
+
+            let visibleCourses = 0;
+
+
+            courseButtons.forEach(
+                function (button) {
+
+                    const courseName =
+                        button.querySelector(
+                            ".course-name"
+                        );
+
+
+                    const courseText =
+                        courseName
+                            ? courseName.textContent
+                                .toLowerCase()
+                            : "";
+
+
+                    const isMatch =
+                        searchText === "" ||
+                        courseText.includes(
+                            searchText
+                        );
+
+
+                    button.style.display =
+                        isMatch
+                            ? ""
+                            : "none";
+
+
+                    if (
+                        isMatch
+                    ) {
+
+                        visibleCourses++;
+                    }
+                }
+            );
+
+
+            courseNoResults.style.display =
+                visibleCourses === 0
+                    ? "block"
+                    : "none";
+        }
+
+
+        courseSearchInput.addEventListener(
+            "input",
+            filterCourses
         );
 
 

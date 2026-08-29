@@ -149,6 +149,79 @@
             margin-bottom: 35px;
         }
 
+        .course-search {
+            position: relative;
+            margin-bottom: 18px;
+        }
+
+        .course-search-input {
+            width: 100%;
+            min-height: 48px;
+
+            padding: 12px 44px 12px 16px;
+
+            border: 1px solid #dedede;
+            border-radius: 14px;
+
+            background-color: white;
+
+            color: #222;
+
+            font-family: inherit;
+            font-size: 16px;
+
+            outline: none;
+
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .course-search-input::placeholder {
+            color: #8a8a8f;
+        }
+
+        .course-search-input:focus {
+            border-color: #147a36;
+        }
+
+        .course-search-icon {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+
+            width: 19px;
+            height: 19px;
+
+            transform: translateY(-50%);
+
+            color: #777;
+
+            pointer-events: none;
+        }
+
+        .course-search-icon svg {
+            width: 100%;
+            height: 100%;
+
+            display: block;
+
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .course-no-results {
+            display: none;
+
+            padding: 18px 10px;
+
+            font-size: 15px;
+
+            color: #777;
+        }
+
         .course-list {
             display: flex;
             flex-direction: column;
@@ -383,7 +456,7 @@
             padding: 8px 12px;
 
             display: grid;
-            grid-template-columns: 82px minmax(0, 1fr);
+            grid-template-columns: 82px minmax(0, 1fr) auto;
             gap: 13px;
             align-items: center;
 
@@ -470,7 +543,13 @@
             transform: rotate(0deg);
             transform-origin: center center;
 
-            transition: transform 0.08s linear;
+            /*
+            No CSS transition here.
+            The compass heading is already smoothed in JavaScript.
+            Removing the transition prevents iOS Safari from briefly
+            animating the long way around when crossing 0° / 360°.
+            */
+            transition: none;
 
             pointer-events: none;
         }
@@ -578,6 +657,8 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+
+            align-self: stretch;
         }
 
         .wind-label {
@@ -621,6 +702,46 @@
             letter-spacing: 0.3px;
 
             color: #333;
+        }
+
+        .wind-plays-like {
+            width: 132px;
+            min-width: 132px;
+
+            margin-top: 0;
+
+            align-self: center;
+            justify-self: end;
+
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+
+            text-align: left;
+            line-height: 1.1;
+
+            color: #147a36;
+        }
+
+        .wind-plays-like-top {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .wind-plays-like-value {
+            margin-top: 2px;
+
+            font-size: 23px;
+            font-weight: 700;
+        }
+
+        .wind-plays-like-target {
+            margin-top: 2px;
+
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
         }
 
         .wind-status {
@@ -926,6 +1047,35 @@
                 <h1>Welcome to CourseCaddie</h1>
                 <div class="main-menu-subtitle">Select course</div>
 
+                <div class="course-search">
+                    <input
+                        id="courseSearchInput"
+                        class="course-search-input"
+                        type="search"
+                        placeholder="Search courses..."
+                        aria-label="Search courses"
+                        autocomplete="off"
+                        autocapitalize="off"
+                        spellcheck="false"
+                    >
+
+                    <div
+                        class="course-search-icon"
+                        aria-hidden="true"
+                    >
+                        <svg viewBox="0 0 24 24">
+                            <circle
+                                cx="11"
+                                cy="11"
+                                r="7"
+                            />
+                            <path
+                                d="M16.5 16.5 21 21"
+                            />
+                        </svg>
+                    </div>
+                </div>
+
                 <div class="course-list">
                     <button id="segaCourseButton" class="course-button" type="button">
                         <span class="course-name">Lyngbygaard SEGA 9-hole course</span>
@@ -954,6 +1104,13 @@
                             </ul>
                         </span>
                     </button>
+                </div>
+
+                <div
+                    id="courseNoResults"
+                    class="course-no-results"
+                >
+                    No courses found
                 </div>
             </div>
         </div>
@@ -991,9 +1148,7 @@
                 Start GPS
             </button>
 
-            <div id="status">
-                GPS is not started
-            </div>
+            <div id="status"></div>
 
             <div id="accuracy"></div>
 
@@ -1077,6 +1232,29 @@
                         Start GPS for wind
                     </div>
 
+                </div>
+
+                <div
+                    id="windPlaysLike"
+                    class="wind-plays-like"
+                >
+                    <span class="wind-plays-like-top">
+                        Plays like
+                    </span>
+
+                    <span
+                        id="windPlaysLikeValue"
+                        class="wind-plays-like-value"
+                    >
+                        -- m
+                    </span>
+
+                    <span
+                        id="windPlaysLikeTarget"
+                        class="wind-plays-like-target"
+                    >
+                        to CENTER
+                    </span>
                 </div>
             </div>
 
@@ -1195,7 +1373,7 @@
                         );
 
                     },
-                    1050
+                    2050
                 );
             }
         );
@@ -1510,6 +1688,12 @@
         let watchId = null;
         let latestPosition = null;
 
+        /*
+        Latest measured GPS distance to the center of the green.
+        Used only for the wind-adjusted "plays like" estimate.
+        */
+        let centerDistanceMeters = null;
+
         function getCurrentCourse() {
             return courses[currentCourseKey];
         }
@@ -1534,7 +1718,7 @@
         }
 
         function openCourse(courseKey) {
-            stopGPS("GPS is not started");
+            stopGPS("");
 
             currentCourseKey = courseKey;
             currentHoleIndex = 0;
@@ -1546,9 +1730,13 @@
         }
 
         function goHome() {
-            stopGPS("GPS is not started");
+            stopGPS("");
             currentCourseKey = null;
             currentHoleIndex = 0;
+
+            courseSearchInput.value = "";
+            filterCourses();
+
             showScreen("mainMenuScreen");
         }
 
@@ -1604,6 +1792,9 @@
                 currentHole.center.lon
             );
 
+            centerDistanceMeters =
+                distanceCenter;
+
             const distanceBack = calculateDistance(
                 myLatitude,
                 myLongitude,
@@ -1648,6 +1839,24 @@
             );
 
 
+        const windPlaysLikeElement =
+            document.getElementById(
+                "windPlaysLike"
+            );
+
+
+        const windPlaysLikeValueElement =
+            document.getElementById(
+                "windPlaysLikeValue"
+            );
+
+
+        const windPlaysLikeTargetElement =
+            document.getElementById(
+                "windPlaysLikeTarget"
+            );
+
+
         const windStatusElement =
             document.getElementById(
                 "windStatus"
@@ -1674,6 +1883,15 @@
 
         let compassAccuracy = null;
         let compassListening = false;
+
+        /*
+        Keep the compass-ring angle unwrapped.
+        Example:
+        358° -> 359° -> 0° -> 1°
+        becomes one continuous rotation instead of a 359° jump.
+        */
+        let lastCompassHeading = null;
+        let continuousCompassRotation = 0;
 
         let lastRelativeWind = null;
         let continuousArrowRotation = 0;
@@ -1719,6 +1937,67 @@
 
 
         /*
+        Estimate how far the shot "plays like" to the center.
+
+        relativeWindFrom:
+        0°   = direct headwind
+        90°  = pure crosswind
+        180° = direct tailwind
+
+        Practical rule used here:
+        - headwind: +2 meters per 1 m/s effective headwind
+        - tailwind: -1 meter per 1 m/s effective tailwind
+
+        Only the head/tail component of the wind is used.
+        Crosswind itself does not change this distance estimate.
+        */
+        function calculatePlaysLikeCenter(
+            actualDistance,
+            windSpeed,
+            relativeWindFrom
+        ) {
+
+            const angleRadians =
+                relativeWindFrom *
+                Math.PI /
+                180;
+
+
+            const alongShotWind =
+                windSpeed *
+                Math.cos(
+                    angleRadians
+                );
+
+
+            let windAdjustment = 0;
+
+
+            if (
+                alongShotWind >= 0
+            ) {
+
+                windAdjustment =
+                    alongShotWind * 2;
+
+            } else {
+
+                windAdjustment =
+                    alongShotWind;
+            }
+
+
+            return Math.max(
+                0,
+                Math.round(
+                    actualDistance +
+                    windAdjustment
+                )
+            );
+        }
+
+
+        /*
         ------------------------------------------------
         UPDATE WIND UI
         ------------------------------------------------
@@ -1736,6 +2015,12 @@
 
                 windFromElement.textContent =
                     "FROM --°";
+
+                windPlaysLikeValueElement.textContent =
+                    "-- m";
+
+                windPlaysLikeTargetElement.textContent =
+                    "to CENTER";
 
                 windArrowRotator.style.transform =
                     "rotate(0deg)";
@@ -1759,6 +2044,12 @@
 
                 windFromElement.textContent =
                     "FROM --°";
+
+                windPlaysLikeValueElement.textContent =
+                    "-- m";
+
+                windPlaysLikeTargetElement.textContent =
+                    "to CENTER";
 
                 windArrowRotator.style.transform =
                     "rotate(0deg)";
@@ -1817,6 +2108,35 @@
                     "0"
                 ) +
                 "°";
+
+
+            if (
+                centerDistanceMeters !== null
+            ) {
+
+                const playsLikeCenter =
+                    calculatePlaysLikeCenter(
+                        centerDistanceMeters,
+                        windSpeedMs,
+                        relativeWindFrom
+                    );
+
+
+                windPlaysLikeValueElement.textContent =
+                    playsLikeCenter +
+                    " m";
+
+                windPlaysLikeTargetElement.textContent =
+                    "to CENTER";
+
+            } else {
+
+                windPlaysLikeValueElement.textContent =
+                    "-- m";
+
+                windPlaysLikeTargetElement.textContent =
+                    "to CENTER";
+            }
 
 
             if (
@@ -1934,14 +2254,42 @@
 
 
             /*
-            Rotate the compass ring so N/E/S/W remain
-            correct relative to the real world while the
-            top of the screen remains the phone's forward
-            direction.
+            Rotate N/E/S/W using an unwrapped angle.
+
+            This is important on iPhone:
+            a heading can change from 359° to 0° even though
+            the phone only moved by 1°. We therefore calculate
+            the shortest angular change and add it to a
+            continuous rotation value.
             */
+            if (
+                lastCompassHeading === null
+            ) {
+
+                continuousCompassRotation =
+                    -phoneHeading;
+
+            } else {
+
+                const compassDelta =
+                    shortestAngleDelta(
+                        lastCompassHeading,
+                        phoneHeading
+                    );
+
+
+                continuousCompassRotation -=
+                    compassDelta;
+            }
+
+
+            lastCompassHeading =
+                phoneHeading;
+
+
             windCardinalRing.style.transform =
                 "rotate(" +
-                (-phoneHeading) +
+                continuousCompassRotation +
                 "deg)";
 
 
@@ -2077,6 +2425,9 @@
             smoothedPhoneHeading = null;
 
             compassAccuracy = null;
+
+            lastCompassHeading = null;
+            continuousCompassRotation = 0;
 
             lastRelativeWind = null;
             continuousArrowRotation = 0;
@@ -2300,11 +2651,22 @@
             lastRelativeWind = null;
             continuousArrowRotation = 0;
 
+            lastCompassHeading = null;
+            continuousCompassRotation = 0;
+
             windSpeedElement.textContent =
                 "--";
 
             windFromElement.textContent =
                 "FROM --°";
+
+            windPlaysLikeValueElement.textContent =
+                "-- m";
+
+            windPlaysLikeTargetElement.textContent =
+                "to CENTER";
+
+            centerDistanceMeters = null;
 
             windStatusElement.textContent =
                 "Start GPS for wind";
@@ -2343,7 +2705,7 @@
             maybeUpdateWind(position);
 
             document.getElementById("status").textContent =
-                "GPS active";
+                "";
 
             document.getElementById("accuracy").textContent =
                 "Estimated GPS accuracy: ±" +
@@ -2404,7 +2766,7 @@
             button.setAttribute("aria-pressed", "true");
         }
 
-        function stopGPS(statusText = "GPS stopped") {
+        function stopGPS(statusText = "") {
 
             /*
             Invalidate any pending weather/compass work.
@@ -3177,6 +3539,93 @@
                     closeImageViewer();
                 }
             }
+        );
+
+
+        /*
+        ================================================================
+        COURSE SEARCH
+        ================================================================
+        */
+
+        const courseSearchInput =
+            document.getElementById(
+                "courseSearchInput"
+            );
+
+
+        const courseNoResults =
+            document.getElementById(
+                "courseNoResults"
+            );
+
+
+        function filterCourses() {
+
+            const searchText =
+                courseSearchInput.value
+                    .trim()
+                    .toLowerCase();
+
+
+            const courseButtons =
+                document.querySelectorAll(
+                    ".course-button"
+                );
+
+
+            let visibleCourses = 0;
+
+
+            courseButtons.forEach(
+                function (button) {
+
+                    const courseName =
+                        button.querySelector(
+                            ".course-name"
+                        );
+
+
+                    const courseText =
+                        courseName
+                            ? courseName.textContent
+                                .toLowerCase()
+                            : "";
+
+
+                    const isMatch =
+                        searchText === "" ||
+                        courseText.includes(
+                            searchText
+                        );
+
+
+                    button.style.display =
+                        isMatch
+                            ? ""
+                            : "none";
+
+
+                    if (
+                        isMatch
+                    ) {
+
+                        visibleCourses++;
+                    }
+                }
+            );
+
+
+            courseNoResults.style.display =
+                visibleCourses === 0
+                    ? "block"
+                    : "none";
+        }
+
+
+        courseSearchInput.addEventListener(
+            "input",
+            filterCourses
         );
 
 
