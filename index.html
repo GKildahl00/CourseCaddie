@@ -731,7 +731,7 @@
         .wind-plays-like-value {
             margin-top: 2px;
 
-            font-size: 26px;
+            font-size: 23px;
             font-weight: 700;
             color: #147a36;
         }
@@ -1940,12 +1940,14 @@
         - arrow toward the player = headwind
         - arrow away from the player = tailwind
 
-        Practical rule used here:
-        - headwind: +2 meters per 1 m/s effective headwind
-        - tailwind: -1 meter per 1 m/s effective tailwind
+        More realistic golf rule-of-thumb used here:
+        - headwind affects carry more than tailwind
+        - longer shots are affected more than short shots
+        - strong crosswind can slightly increase the
+          effective "plays like" distance
 
-        Only the head/tail component of the wind is used.
-        Crosswind itself does not change this distance estimate.
+        This is still an estimate, but it should feel
+        more realistic on the course.
         */
         function calculatePlaysLikeCenter(
             actualDistance,
@@ -1959,28 +1961,79 @@
                 180;
 
 
-            const alongShotWind =
+            /*
+            Positive = headwind
+            Negative = tailwind
+            */
+            const headTailComponent =
                 windSpeed *
                 Math.cos(
                     angleRadians
                 );
 
 
+            const crosswindComponent =
+                Math.abs(
+                    windSpeed *
+                    Math.sin(
+                        angleRadians
+                    )
+                );
+
+
+            /*
+            Short shots are less affected.
+            Long shots are more affected.
+            Clamp so the estimate does not become extreme.
+            */
+            const distanceFactor =
+                Math.min(
+                    1.35,
+                    Math.max(
+                        0.75,
+                        actualDistance / 150
+                    )
+                );
+
+
+            const headwindMetersPerMs =
+                1.2 * distanceFactor;
+
+            const tailwindMetersPerMs =
+                0.7 * distanceFactor;
+
+            const crosswindPenaltyPerMs =
+                0.12 * distanceFactor;
+
+
             let windAdjustment = 0;
 
 
             if (
-                alongShotWind >= 0
+                headTailComponent >= 0
             ) {
 
-                windAdjustment =
-                    alongShotWind * 2;
+                windAdjustment +=
+                    headTailComponent *
+                    headwindMetersPerMs;
 
             } else {
 
-                windAdjustment =
-                    alongShotWind;
+                windAdjustment +=
+                    headTailComponent *
+                    tailwindMetersPerMs;
             }
+
+
+            /*
+            Small extra club-up effect in strong crosswinds.
+            This keeps pure crosswind from changing the number
+            too much, but still reflects that such shots often
+            play slightly longer.
+            */
+            windAdjustment +=
+                crosswindComponent *
+                crosswindPenaltyPerMs;
 
 
             return Math.max(
