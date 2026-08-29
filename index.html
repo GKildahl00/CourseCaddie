@@ -470,7 +470,13 @@
             transform: rotate(0deg);
             transform-origin: center center;
 
-            transition: transform 0.08s linear;
+            /*
+            No CSS transition here.
+            The compass heading is already smoothed in JavaScript.
+            Removing the transition prevents iOS Safari from briefly
+            animating the long way around when crossing 0° / 360°.
+            */
+            transition: none;
 
             pointer-events: none;
         }
@@ -1676,9 +1682,10 @@
         let compassListening = false;
 
         /*
-        Continuous compass-ring rotation prevents the
-        N/E/S/W ring from jumping when the heading crosses
-        between 359° and 0°.
+        Keep the compass-ring angle unwrapped.
+        Example:
+        358° -> 359° -> 0° -> 1°
+        becomes one continuous rotation instead of a 359° jump.
         */
         let lastCompassHeading = null;
         let continuousCompassRotation = 0;
@@ -1942,14 +1949,13 @@
 
 
             /*
-            Rotate the compass ring continuously.
+            Rotate N/E/S/W using an unwrapped angle.
 
-            A compass heading wraps from 359° back to 0°.
-            Rotating directly with -phoneHeading can make CSS
-            animate almost a complete revolution at that point.
-
-            shortestAngleDelta() makes the ring always take the
-            shortest physical path instead.
+            This is important on iPhone:
+            a heading can change from 359° to 0° even though
+            the phone only moved by 1°. We therefore calculate
+            the shortest angular change and add it to a
+            continuous rotation value.
             */
             if (
                 lastCompassHeading === null
