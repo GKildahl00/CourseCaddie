@@ -1,0 +1,3 @@
+Tool: built-in image_gen
+
+Edit the supplied golf hole 5 illustration with exactly one local color correction: the narrow curved TAN horizontal strip crossing the hole at approximately 69% of image height, between the main fairway and tee area, represents a small WATER CHANNEL. Change that strip's tan fill to solid dark navy blue (#00354f), matching the dark blue water style of hole 4. Preserve the exact width, shape and position of this strip. Keep the tiny pale cream vertical bridge crossing the strip unchanged. Preserve every other part of the image: all grass and green shapes and colors, both sand bunkers, tee markers, outer silhouette, white background, framing and dimensions. No added elements or labels. This is a localized recoloring, not a redesign.

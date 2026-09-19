@@ -964,6 +964,125 @@
             cursor: pointer;
         }
 
+        .extra-distances-button {
+            position: absolute;
+            top: calc(12px + env(safe-area-inset-top));
+            left: 12px;
+            z-index: 10000;
+            max-width: calc(100% - 84px);
+            min-height: 48px;
+            padding: 10px 16px;
+            border: 1px solid #dedede;
+            border-radius: 24px;
+            background: #fff;
+            color: #147a36;
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .extra-distances-button[hidden] {
+            display: none;
+        }
+
+        .extra-distances-dialog {
+            width: min(390px, calc(100% - 32px));
+            max-height: calc(100dvh - 48px);
+            padding: 22px;
+            border: 0;
+            border-radius: 20px;
+            background: #fff;
+            color: #222;
+            text-align: left;
+            box-shadow: 0 16px 48px #0005;
+            overflow-y: auto;
+            touch-action: pan-y;
+        }
+
+        .extra-distances-dialog::backdrop {
+            background: #0008;
+        }
+
+        .extra-distances-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .extra-distances-header h2 {
+            margin: 0;
+            color: #147a36;
+            font-size: 22px;
+        }
+
+        .extra-distances-close {
+            flex: 0 0 44px;
+            height: 44px;
+            padding: 0;
+            border: 0;
+            border-radius: 50%;
+            background: #f2f4f2;
+            color: #222;
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        .extra-distances-description,
+        .extra-distances-status {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .extra-distances-list {
+            margin: 20px 0;
+        }
+
+        .extra-distances-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid #e5e9e5;
+        }
+
+        .extra-distances-row:first-child {
+            padding-top: 0;
+        }
+
+        .extra-distances-row dt {
+            font-size: 16px;
+        }
+
+        .extra-distances-row dd {
+            margin: 0;
+            color: #147a36;
+            font-size: 30px;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        .extra-distances-row small {
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+        .extra-distances-gps {
+            width: 100%;
+            min-height: 44px;
+            padding: 12px;
+            border: 0;
+            border-radius: 12px;
+            background: #147a36;
+            color: #fff;
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
         @media (max-width: 360px) {
             body {
                 padding: 8px;
@@ -1308,6 +1427,17 @@
     >
 
         <button
+            id="extraDistancesButton"
+            class="extra-distances-button"
+            type="button"
+            aria-haspopup="dialog"
+            aria-controls="extraDistancesDialog"
+            hidden
+        >
+            Extra distances
+        </button>
+
+        <button
             id="imageViewerClose"
             class="image-viewer-close"
             type="button"
@@ -1333,6 +1463,29 @@
         </div>
 
     </div>
+
+    <dialog
+        id="extraDistancesDialog"
+        class="extra-distances-dialog"
+        aria-labelledby="extraDistancesTitle"
+        aria-describedby="extraDistancesDescription"
+    >
+        <div class="extra-distances-header">
+            <h2 id="extraDistancesTitle">Extra distances</h2>
+            <button
+                id="extraDistancesClose"
+                class="extra-distances-close"
+                type="button"
+                aria-label="Close extra distances"
+                autofocus
+            >&times;</button>
+        </div>
+        <dl id="extraDistancesList" class="extra-distances-list"></dl>
+        <p id="extraDistancesStatus" class="extra-distances-status" role="status"></p>
+        <button id="extraDistancesGps" class="extra-distances-gps" type="button">
+            Start GPS
+        </button>
+    </dialog>
 
     <script>
         /*
@@ -1689,7 +1842,22 @@
                     image: "images/Romo_9_hulsbanen/Romo_9_hulsbanen_hul_1.png",
                     front: { lat: 55.08250833, lon: 8.55466944 },
                     center: { lat: 55.08250000, lon: 8.55478611 },
-                    back: { lat: 55.08248889, lon: 8.55491389 }
+                    back: { lat: 55.08248889, lon: 8.55491389 },
+                    // Optional per-hole targets, measured from the player's GPS.
+                    extraMeasurements: [
+                        {
+                            label: "Greenside bunker — short side",
+                            // 55°04'56.65"N 8°33'17.26"E
+                            lat: 55.0824027778,
+                            lon: 8.5547944444
+                        },
+                        {
+                            label: "Greenside bunker — long side",
+                            // 55°04'56.63"N 8°33'17.42"E
+                            lat: 55.0823972222,
+                            lon: 8.5548388889
+                        }
+                    ]
                 },
                 {
                     number: 2,
@@ -1699,7 +1867,45 @@
                     image: "images/Romo_9_hulsbanen/Romo_9_hulsbanen_hul_2.png",
                     front: { lat: 55.08250000, lon: 8.55478611 },
                     center: { lat: 55.08245556, lon: 8.54838611 },
-                    back: { lat: 55.08247778, lon: 8.54825000 }
+                    back: { lat: 55.08247778, lon: 8.54825000 },
+                    extraMeasurements: [
+                        {
+                            label: "First water hazard — long side",
+                            // 55°04'57.73"N 8°33'01.80"E
+                            lat: 55.0827027778,
+                            lon: 8.5505000000
+                        },
+                        {
+                            label: "First water hazard — short side",
+                            // 55°04'57.80"N 8°33'02.10"E
+                            lat: 55.0827222222,
+                            lon: 8.5505833333
+                        },
+                        {
+                            label: "Second water hazard — long side",
+                            // 55°04'57.18"N 8°32'54.93"E
+                            lat: 55.0825500000,
+                            lon: 8.5485916667
+                        },
+                        {
+                            label: "Second water hazard — short side",
+                            // 55°04'58.27"N 8°32'59.04"E
+                            lat: 55.0828527778,
+                            lon: 8.5497333333
+                        },
+                        {
+                            label: "Greenside bunker — long side",
+                            // 55°04'56.62"N 8°32'53.58"E
+                            lat: 55.0823944444,
+                            lon: 8.5482166667
+                        },
+                        {
+                            label: "Greenside bunker — short side",
+                            // 55°04'56.65"N 8°32'53.76"E
+                            lat: 55.0824027778,
+                            lon: 8.5482666667
+                        }
+                    ]
                 },
                 {
                     number: 3,
@@ -1785,6 +1991,7 @@
         let currentHoleIndex = 0;
         let watchId = null;
         let latestPosition = null;
+        let extraDistancesGpsError = "";
 
         /*
         Latest measured GPS distance to the center of the green.
@@ -1816,6 +2023,7 @@
         }
 
         function openCourse(courseKey) {
+            closeImageViewer();
             stopGPS("");
 
             currentCourseKey = courseKey;
@@ -1828,6 +2036,7 @@
         }
 
         function goHome() {
+            closeImageViewer();
             stopGPS("");
             currentCourseKey = null;
             currentHoleIndex = 0;
@@ -2878,6 +3087,7 @@
 
         function positionUpdated(position) {
             latestPosition = position;
+            extraDistancesGpsError = "";
 
             console.log(
                 "Min position:",
@@ -2886,6 +3096,7 @@
             );
 
             updateDistances(position);
+            updateExtraDistances();
 
             /*
             Wind data follows the GPS position.
@@ -2906,12 +3117,16 @@
         function positionError(error) {
             document.getElementById("status").textContent =
                 "GPS error: " + error.message;
+            extraDistancesGpsError = "GPS unavailable: " + error.message;
+            updateExtraDistances();
         }
 
         function startGPS() {
             if (!navigator.geolocation) {
                 document.getElementById("status").textContent =
                     "This browser does not support GPS.";
+                extraDistancesGpsError = "This browser does not support GPS.";
+                updateExtraDistances();
                 return;
             }
 
@@ -2921,6 +3136,7 @@
 
             document.getElementById("status").textContent =
                 "Finding GPS position...";
+            extraDistancesGpsError = "";
 
             /*
             Create a new wind/compass session.
@@ -2954,6 +3170,7 @@
             button.textContent = "Stop GPS";
             button.classList.add("gps-active");
             button.setAttribute("aria-pressed", "true");
+            updateExtraDistances();
         }
 
         function stopGPS(statusText = "") {
@@ -2975,6 +3192,7 @@
 
 
             latestPosition = null;
+            extraDistancesGpsError = "";
 
             const button = document.getElementById("startButton");
 
@@ -2986,6 +3204,7 @@
             document.getElementById("accuracy").textContent = "";
 
             resetDistances();
+            updateExtraDistances();
         }
 
         function resetDistances() {
@@ -3014,6 +3233,9 @@
 
             const currentCourse = getCurrentCourse();
             const currentHole = getCurrentHole();
+
+            closeImageViewer();
+            extraDistancesButton.hidden = getExtraMeasurements().length === 0;
 
             document.getElementById("holeTitle").textContent =
                 "Hole " + currentHole.number;
@@ -3084,6 +3306,125 @@
             document.getElementById(
                 "holeMap"
             );
+
+        const extraDistancesButton = document.getElementById("extraDistancesButton");
+        const extraDistancesDialog = document.getElementById("extraDistancesDialog");
+        const extraDistancesList = document.getElementById("extraDistancesList");
+        const extraDistancesStatus = document.getElementById("extraDistancesStatus");
+        const extraDistancesGps = document.getElementById("extraDistancesGps");
+
+        function getExtraMeasurements() {
+            if (currentCourseKey === null) {
+                return [];
+            }
+
+            const targets = (getCurrentHole().extraMeasurements || []).filter(function (target) {
+                return Number.isFinite(target.lat) && Number.isFinite(target.lon);
+            });
+            const orderedTargets = [];
+            const obstacleGroups = new Map();
+
+            targets.forEach(function (target) {
+                const sideMatch = target.label.match(/^(.*) — (long|short) side$/i);
+                const obstacleName = sideMatch ? sideMatch[1] : target.label;
+                const side = sideMatch ? sideMatch[2].toLowerCase() : null;
+
+                if (!obstacleGroups.has(obstacleName)) {
+                    obstacleGroups.set(obstacleName, { long: [], short: [], other: [] });
+                }
+
+                const group = obstacleGroups.get(obstacleName);
+                if (side === "long") {
+                    group.long.push(target);
+                } else if (side === "short") {
+                    group.short.push(target);
+                } else {
+                    group.other.push(target);
+                }
+            });
+
+            obstacleGroups.forEach(function (group) {
+                orderedTargets.push.apply(orderedTargets, group.long);
+                orderedTargets.push.apply(orderedTargets, group.short);
+                orderedTargets.push.apply(orderedTargets, group.other);
+            });
+
+            return orderedTargets;
+        }
+
+        function updateExtraDistances() {
+            if (!extraDistancesDialog.open) {
+                return;
+            }
+
+            const targets = getExtraMeasurements();
+            const coordinates = latestPosition && latestPosition.coords;
+            const hasPosition = !extraDistancesGpsError && coordinates &&
+                Number.isFinite(coordinates.latitude) &&
+                Number.isFinite(coordinates.longitude);
+
+            extraDistancesList.replaceChildren();
+
+            targets.forEach(function (target) {
+                const row = document.createElement("div");
+                row.className = "extra-distances-row";
+                const label = document.createElement("dt");
+                label.textContent = target.label;
+                const value = document.createElement("dd");
+                value.textContent = hasPosition
+                    ? Math.round(calculateDistance(
+                        coordinates.latitude,
+                        coordinates.longitude,
+                        target.lat,
+                        target.lon
+                    )) + " "
+                    : "— ";
+                const unit = document.createElement("small");
+                unit.textContent = "m";
+                value.append(unit);
+                row.append(label, value);
+                extraDistancesList.append(row);
+            });
+
+            const waitingForGps = watchId !== null && !extraDistancesGpsError && !hasPosition;
+            extraDistancesGps.hidden = Boolean(hasPosition) || waitingForGps;
+            extraDistancesGps.textContent = extraDistancesGpsError ? "Retry GPS" : "Start GPS";
+
+            if (extraDistancesGpsError) {
+                extraDistancesStatus.textContent = extraDistancesGpsError;
+            } else if (hasPosition) {
+                extraDistancesStatus.textContent = Number.isFinite(coordinates.accuracy)
+                    ? "GPS accuracy: ±" + Math.round(coordinates.accuracy) + " m."
+                    : "GPS position found.";
+            } else {
+                extraDistancesStatus.textContent = waitingForGps
+                    ? "Finding your GPS position…"
+                    : "Start GPS to see distances from your current location.";
+            }
+
+        }
+
+        extraDistancesButton.addEventListener("click", function () {
+            if (getExtraMeasurements().length === 0) {
+                return;
+            }
+
+            document.getElementById("extraDistancesTitle").textContent =
+                "Hole " + getCurrentHole().number + " · Extra distances";
+            extraDistancesDialog.showModal();
+            updateExtraDistances();
+        });
+
+        document.getElementById("extraDistancesClose").addEventListener("click", function () {
+            extraDistancesDialog.close();
+        });
+
+        extraDistancesGps.addEventListener("click", function () {
+            if (extraDistancesGpsError) {
+                stopGPS("");
+            }
+            startGPS();
+        });
 
 
         /*
@@ -3287,6 +3628,8 @@
 
         function openImageViewer() {
 
+            extraDistancesButton.hidden = getExtraMeasurements().length === 0;
+
             imageViewerImage.src =
                 holeMap.src;
 
@@ -3326,6 +3669,10 @@
         */
 
         function closeImageViewer() {
+
+            if (extraDistancesDialog.open) {
+                extraDistancesDialog.close();
+            }
 
             imageViewer.classList.remove(
                 "open"
@@ -3735,6 +4082,12 @@
                         "open"
                     )
                 ) {
+
+                    if (extraDistancesDialog.open) {
+                        event.preventDefault();
+                        extraDistancesDialog.close();
+                        return;
+                    }
 
                     closeImageViewer();
                 }
